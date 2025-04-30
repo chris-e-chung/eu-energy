@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>EU Energy Trade</title>
+
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="site.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+
+    <style>
+        #map { 
+            width: 100vw;
+            height: 700px; 
+            margin-top: 0px;
+            position: relative; 
+            overflow: hidden;   
+            /* z-index: 1;  */
+        }
+        #worldmap {
+            /* width: 100vw; */
+            width: 50vw; 
+            height: 80vh;
+            position: fixed;
+            top: 0;
+            left: 25vw;
+            z-index: 1;
+        }
+        .bubble { 
+            fill: orange; 
+            opacity: 0.7; 
+        }
+        svg {
+                display: block;
+                background-color: #f0f0f0;
+            }
+        #space {
+            width: 300px;
+            height: 1000px; 
+            margin-top: 0px;
+            position: relative;
+            background-color: rgb(124, 133, 133); 
+            z-index: 5;
+            /* overflow: hidden;    */
+        }
+        #big-text {
+            position: absolute;
+            top: 15vw;
+            left: 35vw;
+            z-index: 3;
+            /* width: 50%; */
+            text-align: center;
+            font-size: 60px;
+            color: white;
+            background-color: rgb(124, 133, 133); 
+            padding: 10px;
+        }
+        /* .country {
+            fill: steelblue;
+            stroke: 'transparent';
+            stroke-width: 1px;
+            cursor: pointer;
+            opacity: 0.8;
+        } */
+
+    </style>
+</head>
+
+<body>
+    <svg id="worldmap" width="960" height="600"></svg>
+    <div id='map'> </div>
+    <div id='big-text'>Energy is Everywhere</div>
+    <div id='small-text'>but is it really?</div>
+    <div id='space'> </div>
+
+    <script>
+
+        const southWest = L.latLng(40.351254, -79.879532);
+        const northEast = L.latLng(40.52998, -80.108871);
+        bounds = L.latLngBounds(southWest, northEast);
+
+        const requestData = async function () {
+
+
+            // // Create Map Var, setting max bounds of the map
+            // var map = L.map('map').setView([36.031332, -19.698584], 3);
+
+            // // NORMAL 
+            // // var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            // //     maxZoom: 19,
+            // //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            // // }).addTo(map);
+            
+            // //    ELECTRICITY AT NIGHT - WORKS - start with this and then move to diff
+            // var tiles = L.tileLayer('https://map1.vis.earthdata.nasa.gov/wmts-webmerc/VIIRS_CityLights_2012/default/{time}/{tilematrixset}{maxZoom}/{z}/{y}/{x}.{format}', {
+            //     attribution: 'Imagery provided by services from the Global Imagery Browse Services (GIBS), operated by the NASA/GSFC/Earth Science Data and Information System (<a href="https://earthdata.nasa.gov">ESDIS</a>) with funding provided by NASA/HQ.',
+            //     bounds: [[-85.0511287776, -179.999999975], [85.0511287776, 179.999999975]],
+            //     minZoom: 1,
+            //     maxZoom: 8,
+            //     format: 'jpg',
+            //     time: '',
+            //     tilematrixset: 'GoogleMapsCompatible_Level'
+            // }).addTo(map);
+
+            // // DARK - WORKS - hard to read
+            // var tilesBlack = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            //     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            //     subdomains: 'abcd',
+            //     maxZoom: 20
+            // });
+
+            // var popup = L.popup();
+            //     function onMapClick(e) {
+            //         popup
+            //             .setLatLng(e.latlng)
+            //             .setContent(e.latlng.toString())
+            //             .openOn(map);
+            //     }
+            //     map.on('click', onMapClick);
+
+            /// ------------------------------------------------------------------------ 
+
+            let svg = d3.select("#worldmap")
+
+            const width = svg.attr("width");
+            const height = svg.attr("height");
+
+            const projection = d3.geoMercator()
+                    .scale(170)
+                    .translate([width / 2, height / 1.5]);
+
+            const path = d3.geoPath().projection(projection);
+
+            let mouseOver = function(d) {
+                d3.selectAll(".country")
+                .transition()
+                .duration(200)
+                .style("opacity", '.5')
+                d3.select(this)
+                .transition()
+                .duration(200)
+                .style("opacity", "1")
+                .style("stroke", "black")
+            }
+
+            let mouseLeave = function(d) {
+                d3.selectAll(".country")
+                .transition()
+                .duration(200)
+                .style("opacity", '.8')
+                .style("stroke", "white")
+                d3.select(this)
+                .transition()
+                .duration(200)
+                .style("stroke", "white")
+            }
+
+            d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function(data) {
+                svg.append("g")
+                    .selectAll("path")
+                    .data(data.features)
+                    .enter()
+                    .append("path")
+                    .attr("d", path)
+                    .attr("class", "country")
+                    .style("stroke", "white")
+                    .style("stroke-width", '.5px')
+                    .style("fill", "steelblue")
+                    .style("opacity", ".8")
+                    .on("mouseover", mouseOver )
+                    .on("mouseleave", mouseLeave )
+                    .on("click", function(event, d) {
+                        alert("Country: " + d.properties.name);
+                    });
+            });
+
+
+        }
+
+
+        requestData();
+
+    </script>
+
+</body>
