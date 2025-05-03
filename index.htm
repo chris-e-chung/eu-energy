@@ -21,17 +21,18 @@
             width: 100vw;
             height: 700px; 
             margin-top: 0px;
-            position: relative; 
+            /* position: absolute;  */
             overflow: hidden;   
+            z-index: 2;
+
             /* z-index: 1;  */
         }
         #worldmap {
-            /* width: 100vw; */
-            width: 50vw; 
-            height: 80vh;
+            width: 100vw; 
+            height: 100vh;
             position: fixed;
             top: 0;
-            left: 25vw;
+            left: 0;
             z-index: 1;
         }
         .bubble { 
@@ -44,7 +45,7 @@
             }
         #space {
             width: 300px;
-            height: 1000px; 
+            height: 1900px; 
             margin-top: 0px;
             position: relative;
             background-color: rgb(124, 133, 133); 
@@ -53,15 +54,41 @@
         }
         #big-text {
             position: absolute;
-            top: 15vw;
-            left: 35vw;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* centers the element */
             z-index: 3;
-            /* width: 50%; */
             text-align: center;
             font-size: 60px;
             color: white;
-            background-color: rgb(124, 133, 133); 
+            background-color: rgba(124, 133, 133, 0.9); 
             padding: 10px;
+        }
+        #small-text {
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 700px;
+            text-align: center;
+            font-size: 25px;
+            color: white;
+            background-color: rgba(124, 133, 133, 0.8); 
+            padding: 10px;
+            z-index: 3;
+        }
+        #small-text-2 {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 700px;
+            text-align: center;
+            font-size: 25px;
+            color: white;
+            background-color: rgba(124, 133, 133, 0.8); 
+            padding: 10px;
+            z-index: 3;
         }
         /* .country {
             fill: steelblue;
@@ -75,11 +102,24 @@
 </head>
 
 <body>
-    <svg id="worldmap" width="960" height="600"></svg>
-    <div id='map'> </div>
+    <svg id="worldmap" width="1560" height="750"></svg>
     <div id='big-text'>Energy is Everywhere</div>
-    <div id='small-text'>but is it really?</div>
-    <div id='space'> </div>
+    <div id='small-text'>The goal of our visualization is to explore the international trade of energy,
+         electricity, renewables, and the natural gas trade, specifically in Europe. We will create an 
+         article where users will be introduced to the topic and interact with through scrolling, hovering, 
+         and clicking. Users will go from one section/interactive visualization to the next through scrolling,
+          similar to that of the NY Times articles. The main visualizations will be price and energy graphs and
+           interactive energy flow maps. "</div>
+    <div id='small-text-2'>As the user scrolls more, the map will zoom in on Europe and the EU. Text will pop up 
+        and explain how the EU has committed to becoming carbon neutral by 2050 and how this visualization will 
+        help users understand how the energy markets can be the key to making it happen. As they scroll, the user 
+        will first see arrows between countries popping up, explaining how energy is traded between countries. 
+        For example, France, which has a high amount of nuclear energy generation, can sell their excess energy 
+        to Germany who doesn’t have as much clean energy generation. Users will be able to click on various 
+        countries at this stage and see different arrows pop up as well as a side-box detailing who they are 
+        buying/selling energy from and in what form. </div>
+    <div id='map'> </div>
+    <div id='space'> </div> <!--- big grey box-->
 
     <script>
 
@@ -88,7 +128,6 @@
         bounds = L.latLngBounds(southWest, northEast);
 
         const requestData = async function () {
-
 
             // // Create Map Var, setting max bounds of the map
             // var map = L.map('map').setView([36.031332, -19.698584], 3);
@@ -130,12 +169,16 @@
 
             let svg = d3.select("#worldmap")
 
-            const width = svg.attr("width");
-            const height = svg.attr("height");
+            // const width = svg.attr("width");
+            // const height = svg.attr("height");
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            svg.attr("width", width).attr("height", height);
 
             const projection = d3.geoMercator()
                     .scale(170)
-                    .translate([width / 2, height / 1.5]);
+                    .translate([width / 2, height / 2]);
 
             const path = d3.geoPath().projection(projection);
 
@@ -183,9 +226,55 @@
             });
 
 
+
+            
+
+
+            let zoom = d3.zoom().on("zoom", (event) => {
+                svg.select("g").attr("transform", event.transform);
+            });
+
+            // svg.call(zoom);
+
+            let hasZoomed = false;
+            window.addEventListener('scroll', () => {
+                const triggerY = window.innerHeight * 0.5;
+
+                if (!hasZoomed && window.scrollY > triggerY) {
+                    hasZoomed = true;
+                    scrollZoomToCountry("Germany"); // center of Europe
+                } else if (hasZoomed && scrollY < triggerY - 50) {
+                        zoomOutToWorld();
+                        hasZoomed = false;
+                    }
+                });
+
+            function scrollZoomToCountry(countryName) {
+                d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function(data) {
+                    const country = data.features.find(f => f.properties.name === countryName);
+                    if (!country) return;
+
+                    const [[x0, y0], [x1, y1]] = path.bounds(country);
+                    svg.transition().duration(1000).call(
+                        zoom.transform,
+                        d3.zoomIdentity
+                            .translate(width / 2, height / 2)
+                            .scale(Math.min(6, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
+                            .translate(-(x0 + x1) / 2, -(y0 + y1) / 2)
+                    );
+                });
+            }
+
+            function zoomOutToWorld() {
+                svg.transition().duration(1000).call(
+                    zoom.transform,
+                    d3.zoomIdentity // original zoom
+                );
+            }
+
+
+
         }
-
-
         requestData();
 
     </script>
