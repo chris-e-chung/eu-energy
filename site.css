@@ -1,0 +1,95 @@
+html {
+    margin: 0;
+    padding: 0;
+    font-family: "Montserrat", sans-serif;
+}
+
+#map { 
+    width: 100vw;
+    height: 700px; 
+    margin-top: 0px;
+    /* position: absolute;  */
+    overflow: hidden;   
+    z-index: 2;
+
+    /* z-index: 1;  */
+}
+#worldmap {
+    width: 100vw; 
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+.bubble { 
+    fill: orange; 
+    opacity: 0.7; 
+}
+svg {
+        display: block;
+        background-color: #f0f0f0;
+    }
+
+.text-box {
+    position: absolute;
+    text-align: center;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+    font-size: 25px;
+    color: white;
+    background-color: rgba(124, 133, 133, 0.8); 
+    padding: 10px;
+    z-index: 3;
+}
+
+#space {
+    width: 300px;
+    height: 2900px; 
+    margin-top: 0px;
+    position: relative;
+    background-color: rgb(124, 133, 133); 
+    opacity: 0;
+    z-index: 5;
+    /* overflow: hidden;    */
+}
+#big-text {
+    top: 400px;
+}
+#small-text {
+    top: 700px;
+    width: 700px;
+}
+#small-text-2 {
+    top: 900px;
+    width: 700px;
+
+}
+#german-div {
+    top: 1400px;
+    width: 1000px;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#russian-div {
+    top: 2000px;
+    width: 1000px;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+/* .country {
+    fill: steelblue;
+    stroke: 'transparent';
+    stroke-width: 1px;
+    cursor: pointer;
+    opacity: 0.8;
+} */

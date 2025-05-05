@@ -16,109 +16,29 @@
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
 
-    <style>
-        #map { 
-            width: 100vw;
-            height: 700px; 
-            margin-top: 0px;
-            /* position: absolute;  */
-            overflow: hidden;   
-            z-index: 2;
-
-            /* z-index: 1;  */
-        }
-        #worldmap {
-            width: 100vw; 
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-        .bubble { 
-            fill: orange; 
-            opacity: 0.7; 
-        }
-        svg {
-                display: block;
-                background-color: #f0f0f0;
-            }
-        #space {
-            width: 300px;
-            height: 2900px; 
-            margin-top: 0px;
-            position: relative;
-            background-color: rgb(124, 133, 133); 
-            opacity: 0;
-            z-index: 5;
-            /* overflow: hidden;    */
-        }
-        #big-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%); /* centers the element */
-            z-index: 3;
-            text-align: center;
-            font-size: 60px;
-            color: white;
-            background-color: rgba(124, 133, 133, 0.9); 
-            padding: 10px;
-        }
-        #small-text {
-            position: absolute;
-            top: 70%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 700px;
-            text-align: center;
-            font-size: 25px;
-            color: white;
-            background-color: rgba(124, 133, 133, 0.8); 
-            padding: 10px;
-            z-index: 3;
-        }
-        #small-text-2 {
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 700px;
-            text-align: center;
-            font-size: 25px;
-            color: white;
-            background-color: rgba(124, 133, 133, 0.8); 
-            padding: 10px;
-            z-index: 3;
-        }
-        /* .country {
-            fill: steelblue;
-            stroke: 'transparent';
-            stroke-width: 1px;
-            cursor: pointer;
-            opacity: 0.8;
-        } */
-
-    </style>
 </head>
 
 <body>
     <svg id="worldmap" width="1560" height="750"></svg>
-    <div id='big-text'>Energy is Everywhere</div>
-    <div id='small-text'>The goal of our visualization is to explore the international trade of energy,
-         electricity, renewables, and the natural gas trade, specifically in Europe. We will create an 
-         article where users will be introduced to the topic and interact with through scrolling, hovering, 
-         and clicking. Users will go from one section/interactive visualization to the next through scrolling,
-          similar to that of the NY Times articles. The main visualizations will be price and energy graphs and
-           interactive energy flow maps. "</div>
-    <div id='small-text-2'>As the user scrolls more, the map will zoom in on Europe and the EU. Text will pop up 
-        and explain how the EU has committed to becoming carbon neutral by 2050 and how this visualization will 
-        help users understand how the energy markets can be the key to making it happen. As they scroll, the user 
-        will first see arrows between countries popping up, explaining how energy is traded between countries. 
-        For example, France, which has a high amount of nuclear energy generation, can sell their excess energy 
-        to Germany who doesn’t have as much clean energy generation. Users will be able to click on various 
-        countries at this stage and see different arrows pop up as well as a side-box detailing who they are 
-        buying/selling energy from and in what form. </div>
+    <div id='big-text' class="text-box">An Intro to the Energy Trade</div>
+    <div id='small-text' class="text-box">
+        The goal of our visualization is to explore the international trade of energy,
+         electricity, renewables, and the natural gas trade, specifically in Europe."
+    </div>
+    <div id='small-text-2' class="text-box">
+        First, we start with a big, complicated overview. Then we zoom to focus on a specific country to
+        look at an example. Say, Germany.
+    </div>
+
+    <div id="german-div" class="text-box">
+        <h3>German Energy Production</h3>
+        <svg id="german-energy" width="1000" height="500"></svg>
+    </div>
+    <div id="russian-div" class="text-box">
+        <h3>Russian Energy Production</h3>
+        <svg id="russian-energy" width="1000" height="500"></svg>
+    </div>
+
     <div id='map'> </div>
     <div id='space'> </div> <!--- big grey box-->
 
@@ -127,50 +47,12 @@
     </div>
 
     <script>
-
         const southWest = L.latLng(40.351254, -79.879532);
         const northEast = L.latLng(40.52998, -80.108871);
         bounds = L.latLngBounds(southWest, northEast);
 
         const requestData = async function () {
             var raw_EU_to_world_liquid = await d3.csv("imports_of_gas_liquied_EU.csv", d3.autoType)
-            // // Create Map Var, setting max bounds of the map
-            // var map = L.map('map').setView([36.031332, -19.698584], 3);
-
-            // // NORMAL 
-            // // var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            // //     maxZoom: 19,
-            // //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            // // }).addTo(map);
-            
-            // //    ELECTRICITY AT NIGHT - WORKS - start with this and then move to diff
-            // var tiles = L.tileLayer('https://map1.vis.earthdata.nasa.gov/wmts-webmerc/VIIRS_CityLights_2012/default/{time}/{tilematrixset}{maxZoom}/{z}/{y}/{x}.{format}', {
-            //     attribution: 'Imagery provided by services from the Global Imagery Browse Services (GIBS), operated by the NASA/GSFC/Earth Science Data and Information System (<a href="https://earthdata.nasa.gov">ESDIS</a>) with funding provided by NASA/HQ.',
-            //     bounds: [[-85.0511287776, -179.999999975], [85.0511287776, 179.999999975]],
-            //     minZoom: 1,
-            //     maxZoom: 8,
-            //     format: 'jpg',
-            //     time: '',
-            //     tilematrixset: 'GoogleMapsCompatible_Level'
-            // }).addTo(map);
-
-            // // DARK - WORKS - hard to read
-            // var tilesBlack = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            //     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-            //     subdomains: 'abcd',
-            //     maxZoom: 20
-            // });
-
-            // var popup = L.popup();
-            //     function onMapClick(e) {
-            //         popup
-            //             .setLatLng(e.latlng)
-            //             .setContent(e.latlng.toString())
-            //             .openOn(map);
-            //     }
-            //     map.on('click', onMapClick);
-
-            /// ------------------------------------------------------------------------ 
 
             let svg = d3.select("#worldmap")
 
@@ -239,8 +121,6 @@
             function zoomed(event) {
                 svg.attr("transform", event.transform);
             }
-
-
 
             // scroll even listener
             let hasZoomed = false;
@@ -326,7 +206,7 @@
                             .filter(d => d !== null);
 
                             tradeLinks.forEach(d => {
-                                        d.strokeWidth = Math.sqrt(d.value) / 500;  // or adjust scale as needed
+                                        d.strokeWidth = Math.sqrt(d.value) / 500 + 5;  // or adjust scale as needed
                                     });
 
 
@@ -428,6 +308,82 @@
                         });
 
                     }
+
+            async function electricityGraphMaker(dataPath, svgID) {
+                const raw = await d3.csv(dataPath, d3.autoType);
+
+                const years = Object.keys(raw[0])
+                                    .filter(k => k !== "Type")
+                                    .map(Number);
+
+                const data = years.map(year => {
+                    const entry = { Year: year };
+                    raw.forEach(row => {
+                        entry[row.Type] = row[year];
+                    });
+                    return entry;
+                });
+
+                console.log(data)
+                const svg = d3.select(svgID);
+                const width = +svg.attr("width");
+                const height = +svg.attr("height");
+                const margin = {top: 10, right: 10, bottom: 50, left: 50};
+
+                const chartWidth = width - margin.left - margin.right;
+                const chartHeight = height - margin.top - margin.bottom;
+
+                let annotations = svg.append("g").attr("id","annotations");
+                  
+                let chartArea = svg.append("g").attr("id","points")
+                  .attr("transform","translate("+margin.left+","+margin.top+")");
+
+                const groups = ["Fossil fuels", "Nuclear", "Renewables", "Year"];
+                const filteredData = data.map( d => 
+                    Object.fromEntries(
+                        Object.entries(d).filter(([key]) => groups.includes(key))
+                    )
+                )
+                console.log(filteredData)
+
+                console.log(years)
+                const yearScale = d3.scaleBand().domain(years)
+                                                .range([0, chartWidth])
+                                                .padding([0.2])
+
+                annotations.append("g")
+                            .attr("transform","translate("+margin.left+","+(chartHeight+margin.top+10)+")")
+                            .call(d3.axisBottom(yearScale).tickSizeOuter(0));
+
+                const energyScale = d3.scaleLinear().domain([0, 1200])
+                                                    .range([chartHeight, 0]);
+                
+                annotations.append("g")
+                            .attr("transform","translate("+(margin.left-10)+","+margin.top+")")
+
+                            .call(d3.axisLeft(energyScale));
+                
+                const colorScale = d3.scaleOrdinal()
+                                .domain(groups)
+                                .range(["black", "blue", "green"])
+
+                let stackedData = d3.stack()
+                                      .keys(groups)
+                                      (filteredData)
+
+                stackedData = stackedData.filter(function (d) {return !(d.key == "Year")})
+                
+                chartArea.append("g").selectAll("g").data(stackedData).join("g")
+                   .attr("fill", d => colorScale(d.key)).selectAll('rect').data(d => d).join("rect")
+                        .attr("x", d => yearScale(d.data.Year))
+                        .attr("y", d => energyScale(d[1]))
+                        .attr("height", d => energyScale(d[0]) - energyScale(d[1]))
+                        .attr("width", yearScale.bandwidth());
+
+                   
+            }
+            electricityGraphMaker("germany_energy.csv", "svg#german-energy");
+            electricityGraphMaker("russian_energy.csv", "svg#russian-energy");
 
         }
         requestData();
