@@ -45,10 +45,11 @@
             }
         #space {
             width: 300px;
-            height: 1900px; 
+            height: 2900px; 
             margin-top: 0px;
             position: relative;
             background-color: rgb(124, 133, 133); 
+            opacity: 0;
             z-index: 5;
             /* overflow: hidden;    */
         }
@@ -128,7 +129,7 @@
         bounds = L.latLngBounds(southWest, northEast);
 
         const requestData = async function () {
-
+            var raw_EU_to_world_liquid = await d3.csv("imports_of_gas_liquied_EU.csv", d3.autoType)
             // // Create Map Var, setting max bounds of the map
             // var map = L.map('map').setView([36.031332, -19.698584], 3);
 
@@ -177,34 +178,35 @@
             svg.attr("width", width).attr("height", height);
 
             const projection = d3.geoMercator()
-                    .scale(170)
-                    .translate([width / 2, height / 2]);
+                            .scale((width / 2 / Math.PI))  // sensible global scale
+                            .translate([width / 2, height / 2]);
 
             const path = d3.geoPath().projection(projection);
 
-            let mouseOver = function(d) {
-                d3.selectAll(".country")
-                .transition()
-                .duration(200)
-                .style("opacity", '.5')
-                d3.select(this)
-                .transition()
-                .duration(200)
-                .style("opacity", "1")
-                .style("stroke", "black")
-            }
+            // let mouseOver = function(d) {
+            //     d3.selectAll(".country")
+            //     .transition()
+            //     .duration(200)
+            //     .style("opacity", '.5')
+            //     d3.select(this)
+            //     .transition()
+            //     .duration(200)
+            //     .style("opacity", "1")
+            //     .style("stroke", "black")
+            // }
 
-            let mouseLeave = function(d) {
-                d3.selectAll(".country")
-                .transition()
-                .duration(200)
-                .style("opacity", '.8')
-                .style("stroke", "white")
-                d3.select(this)
-                .transition()
-                .duration(200)
-                .style("stroke", "white")
-            }
+            // let mouseLeave = function(d) {
+            //     d3.selectAll(".country")
+            //     .transition()
+            //     .duration(200)
+            //     .style("opacity", '.8')
+            //     .style("stroke", "white")
+            //     d3.select(this)
+            //     .transition()
+            //     .duration(200)
+            //     .style("stroke", "white")
+            // }
+
 
             d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function(data) {
                 svg.append("g")
@@ -218,52 +220,60 @@
                     .style("stroke-width", '.5px')
                     .style("fill", "steelblue")
                     .style("opacity", ".8")
-                    .on("mouseover", mouseOver )
-                    .on("mouseleave", mouseLeave )
+                    // .on("mouseover", mouseOver )
+                    // .on("mouseleave", mouseLeave )
                     .on("click", function(event, d) {
                         alert("Country: " + d.properties.name);
                     });
             });
-
-
-
             
 
-
-            let zoom = d3.zoom().on("zoom", (event) => {
-                svg.select("g").attr("transform", event.transform);
-            });
+            const zoom = d3.zoom().scaleExtent([1, 8]).on("zoom", zoomed);
 
             // svg.call(zoom);
-
-            let hasZoomed = false;
-            window.addEventListener('scroll', () => {
-                const triggerY = window.innerHeight * 0.5;
-
-                if (!hasZoomed && window.scrollY > triggerY) {
-                    hasZoomed = true;
-                    scrollZoomToCountry("Germany"); // center of Europe
-                } else if (hasZoomed && scrollY < triggerY - 50) {
-                        zoomOutToWorld();
-                        hasZoomed = false;
-                    }
-                });
-
-            function scrollZoomToCountry(countryName) {
-                d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function(data) {
-                    const country = data.features.find(f => f.properties.name === countryName);
-                    if (!country) return;
-
-                    const [[x0, y0], [x1, y1]] = path.bounds(country);
-                    svg.transition().duration(1000).call(
-                        zoom.transform,
-                        d3.zoomIdentity
-                            .translate(width / 2, height / 2)
-                            .scale(Math.min(6, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
-                            .translate(-(x0 + x1) / 2, -(y0 + y1) / 2)
-                    );
-                });
+            
+            function zoomed(event) {
+                svg.attr("transform", event.transform);
             }
+
+
+
+            // scroll even listener
+            let hasZoomed = false;
+            let zoomLevel = 0;  // 0 = world, 1 = moderate zoom, 2 = full zoom
+            window.addEventListener('scroll', () => {
+                const trigger1 = window.innerHeight * 0.5;
+                const trigger2 = window.innerHeight * 1.4;
+
+                if (window.scrollY > trigger2 && zoomLevel < 2) {
+                    // Scroll far down → Full zoom
+                    zoomLevel = 2;
+                    scrollZoomToCountry("Germany", 3);
+                    EUGasTradeLink();
+                    console.log("Zoom level 2 (full)");
+                } else if (window.scrollY > trigger1 && zoomLevel < 1) {
+                    // Scroll halfway down → Moderate zoom
+                    zoomLevel = 1;
+                    scrollZoomToCountry("Germany", 1.5);
+                    EUGasTradeLink();
+                    console.log("Zoom level 1 (moderate)");
+                } else if (window.scrollY < trigger1 - 50 && zoomLevel > 0) {
+                    // Scroll back up → Zoom out to world
+                    zoomLevel = 0;
+                    zoomOutToWorld();
+                    console.log("Zoom level 0 (world)");
+                }
+            });
+
+                // zooms to a country
+                function scrollZoomToCountry(countryName, scale) {
+                        svg.transition().duration(1000).call(
+                            zoom.transform,
+                            d3.zoomIdentity
+                                .scale(scale)
+                                .translate(0, height * 0.2) 
+                        );
+                    };
 
             function zoomOutToWorld() {
                 svg.transition().duration(1000).call(
@@ -272,7 +282,125 @@
                 );
             }
 
+            // creates first trade links between EU and the world
+            function EUGasTradeLink() {
+                Promise.all([
+                        d3.csv("imports_of_gas_liquied_EU.csv", d3.autoType),
+                        d3.csv("country-coord.csv", d3.autoType)
+                    ]).then(([tradeData, countryCoords]) => {
+                        // Step 1: Get Germany's coordinates (EU hub)
+                        const germany = countryCoords.find(d => d.Country === "Germany");
+                        const euLatLon = [germany["Longitude (average)"], germany["Latitude (average)"]];
 
+                        // Step 2: Filter valid trade entries and map to coordinates
+                        const tradeLinks = tradeData
+                            .filter(d => d["Reporter"] === "European Union" && d["TradeFlow"] === "Import")
+                            .map(d => {
+                                const partner = countryCoords.find(c => c.Country === d["Partner"]);
+                                if (!partner) return null;
+                                return {
+                                    source: euLatLon,
+                                    target: [partner["Longitude (average)"], partner["Latitude (average)"]],
+                                    value: d["Trade Value 1000USD"]
+                                };
+                            })
+                            .filter(d => d !== null);
+
+                            tradeLinks.forEach(d => {
+                                        d.strokeWidth = Math.sqrt(d.value) / 500;  // or adjust scale as needed
+                                    });
+
+
+                        const maxWidth = d3.max(tradeLinks, d => d.strokeWidth);
+                        const colorScale = d3.scaleSequential()
+                            .domain([0, maxWidth])
+                            .interpolator(d3.interpolateOranges);  // y
+
+                        // Step 3: Draw curved paths
+                        svg.selectAll(".trade-link")
+                            .data(tradeLinks)
+                            .enter()
+                            .append("path")
+                            .attr("class", "trade-link")
+                            .attr("d", d => {
+                                const geoLine = {
+                                    type: "LineString",
+                                    coordinates: [d.source, d.target]
+                                };
+                                return path(geoLine);
+                            })
+                            .style("fill", "none")
+                            .style("stroke", d => colorScale(d.strokeWidth))
+                            .style("stroke-width", d => d.strokeWidth)
+                            .style("opacity", 0.8)
+                            .on("mouseover", mouseOver)
+                            .on("mousemove", mouseOver) // update position as the mouse moves
+                            .on("mouseleave", mouseLeave);
+
+                        svg.selectAll("endCircle")
+                            .data(tradeLinks)
+                            .enter()
+                            .append("circle")
+                            .attr("cx", d => projection(d.target)[0])
+                            .attr("cy", d => projection(d.target)[1])
+                            .attr("r", d => d.strokeWidth)
+                            .style("fill", d => colorScale(d.strokeWidth))
+                            .style("opacity", 0.6);
+                        });
+
+                        const mouseOver = function(event, d) {
+                            // Dim all links
+                            d3.selectAll(".trade-link")
+                                .transition()
+                                .duration(200)
+                                .style("opacity", 0.2);
+
+                            // Highlight the hovered link
+                            d3.select(this)
+                                .raise()  // bring to front
+                                .transition()
+                                .duration(200)
+                                .style("opacity", 1)
+                                // .style("stroke", "#000");  // optional: highlight color
+                            tooltip
+                                .html(`<strong>Quantity:</strong> ${d.Quantity}`)
+                                .style("left", (event.pageX + 10) + "px")
+                                .style("top", (event.pageY - 20) + "px")
+                                .transition()
+                                .duration(200)
+                                .style("opacity", 1);
+                        };
+
+                        const mouseLeave = function(event, d) {
+                            // Reset all links
+                            d3.selectAll(".trade-link")
+                                .transition()
+                                .duration(200)
+                                .style("opacity", 0.8);
+
+                            // Reset stroke color of this link
+                            d3.select(this)
+                                .transition()
+                                .duration(200)
+                                .style("opacity", 0.8)
+                                .style("stroke", d => colorScale(d.strokeWidth));  // reset to mapped color
+                            tooltip
+                                .transition()
+                                .duration(200)
+                                .style("opacity", 0);
+                        };
+                        const tooltip = d3.select("body")
+                            .append("div")
+                            .attr("class", "tooltip")
+                            .style("position", "absolute")
+                            .style("padding", "6px 10px")
+                            .style("background", "rgba(0, 0, 0, 0.7)")
+                            .style("color", "white")
+                            .style("border-radius", "4px")
+                            .style("font-size", "12px")
+                            .style("pointer-events", "none")
+                            .style("opacity", 0);
+                    }
 
         }
         requestData();
