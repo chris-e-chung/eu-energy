@@ -122,6 +122,10 @@
     <div id='map'> </div>
     <div id='space'> </div> <!--- big grey box-->
 
+    <div id="quantityBox" style="position: fixed; top: 10px; right: 10px; background-color: rgba(0, 0, 0, 0.7); color: white; padding: 10px; border-radius: 5px; font-size: 14px; opacity: 0;">
+        <strong>Quantity:</strong> <span id="quantityValue">0</span>
+    </div>
+
     <script>
 
         const southWest = L.latLng(40.351254, -79.879532);
@@ -282,6 +286,20 @@
                 );
             }
 
+
+            const tooltip = d3.select("body")
+                            .append("div")
+                            .attr("class", "tooltip")
+                            .style("position", "absolute")
+                            .style("padding", "6px 10px")
+                            .style("background", "rgba(0, 0, 0, 0.7)")
+                            .style("color", "white")
+                            .style("border-radius", "4px")
+                            .style("font-size", "12px")
+                            .style("pointer-events", "none")
+                            .style("opacity", 0);
+
+
             // creates first trade links between EU and the world
             function EUGasTradeLink() {
                 Promise.all([
@@ -301,7 +319,8 @@
                                 return {
                                     source: euLatLon,
                                     target: [partner["Longitude (average)"], partner["Latitude (average)"]],
-                                    value: d["Trade Value 1000USD"]
+                                    value: d["Trade Value 1000USD"],
+                                    quantity: d["Quantity"] 
                                 };
                             })
                             .filter(d => d !== null);
@@ -315,6 +334,66 @@
                         const colorScale = d3.scaleSequential()
                             .domain([0, maxWidth])
                             .interpolator(d3.interpolateOranges);  // y
+
+                        const mouseOver = function(event, d) {
+                            const data = this.__data__; 
+                            // Dim all links
+                            d3.selectAll(".trade-link")
+                                .transition()
+                                .duration(200)
+                                .style("opacity", 0.2);
+
+                            // Highlight the hovered link
+                            d3.select(this)
+                                .raise()  // bring to front
+                                .transition()
+                                .duration(200)
+                                .style("opacity", 1);
+                                // .style("stroke", "#000");  // optional: highlight color
+                            // tooltip
+                            //     .html(`<strong>Quantity:</strong> ${d.quantity}`)
+                            //     .style("left", (event.pageX + 10) + "px")
+                            //     .style("top", (event.pageY - 20) + "px")
+                            //     .transition()
+                            //     .duration(200)
+                            //     .style("opacity", 1)
+                            //     .style("z-index", 6);
+                            // console.log(d.quantity)
+                            let amount = d.quantity
+                            const quantityBox = d3.select("#quantityBox");
+                                quantityBox.transition()
+                                    .duration(200)
+                                    .style("opacity", 1);  // Make it visible
+                                quantityBox.select("#quantityValue").text(data.quantity + "kg");  // Set the quantity value
+
+                                console.log("Quantity:", data.quantity);
+
+                        };
+
+                        const mouseLeave = function(event, d) {
+                            // Reset all links
+                            d3.selectAll(".trade-link")
+                                .transition()
+                                .duration(200)
+                                .style("opacity", 0.8);
+
+                            // Reset stroke color of this link
+                            d3.select(this)
+                                .transition()
+                                .duration(200)
+                                .style("opacity", 0.8)
+                                .style("stroke", d => colorScale(d.strokeWidth));  // reset to mapped color
+                            tooltip
+                                .transition()
+                                .duration(200)
+                                .style("opacity", 0);
+
+
+                            d3.select("#quantityBox")
+                                .transition()
+                                .duration(200)
+                                .style("opacity", 0);
+                        };
 
                         // Step 3: Draw curved paths
                         svg.selectAll(".trade-link")
@@ -348,58 +427,6 @@
                             .style("opacity", 0.6);
                         });
 
-                        const mouseOver = function(event, d) {
-                            // Dim all links
-                            d3.selectAll(".trade-link")
-                                .transition()
-                                .duration(200)
-                                .style("opacity", 0.2);
-
-                            // Highlight the hovered link
-                            d3.select(this)
-                                .raise()  // bring to front
-                                .transition()
-                                .duration(200)
-                                .style("opacity", 1)
-                                // .style("stroke", "#000");  // optional: highlight color
-                            tooltip
-                                .html(`<strong>Quantity:</strong> ${d.Quantity}`)
-                                .style("left", (event.pageX + 10) + "px")
-                                .style("top", (event.pageY - 20) + "px")
-                                .transition()
-                                .duration(200)
-                                .style("opacity", 1);
-                        };
-
-                        const mouseLeave = function(event, d) {
-                            // Reset all links
-                            d3.selectAll(".trade-link")
-                                .transition()
-                                .duration(200)
-                                .style("opacity", 0.8);
-
-                            // Reset stroke color of this link
-                            d3.select(this)
-                                .transition()
-                                .duration(200)
-                                .style("opacity", 0.8)
-                                .style("stroke", d => colorScale(d.strokeWidth));  // reset to mapped color
-                            tooltip
-                                .transition()
-                                .duration(200)
-                                .style("opacity", 0);
-                        };
-                        const tooltip = d3.select("body")
-                            .append("div")
-                            .attr("class", "tooltip")
-                            .style("position", "absolute")
-                            .style("padding", "6px 10px")
-                            .style("background", "rgba(0, 0, 0, 0.7)")
-                            .style("color", "white")
-                            .style("border-radius", "4px")
-                            .style("font-size", "12px")
-                            .style("pointer-events", "none")
-                            .style("opacity", 0);
                     }
 
         }
