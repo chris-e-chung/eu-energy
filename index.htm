@@ -16,90 +16,6 @@
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
 
-    <style>
-        #map { 
-            width: 100vw;
-            height: 700px; 
-            margin-top: 0px;
-            /* position: absolute;  */
-            overflow: hidden;   
-            z-index: 2;
-
-            /* z-index: 1;  */
-        }
-        #worldmap {
-            width: 100vw; 
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-        .bubble { 
-            fill: orange; 
-            opacity: 0.7; 
-        }
-        svg {
-                display: block;
-                background-color: #f0f0f0;
-            }
-        #space {
-            width: 300px;
-            height: 2900px; 
-            margin-top: 0px;
-            position: relative;
-            background-color: rgb(124, 133, 133); 
-            opacity: 0;
-            z-index: 5;
-            /* overflow: hidden;    */
-        }
-        #big-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%); /* centers the element */
-            z-index: 3;
-            text-align: center;
-            font-size: 60px;
-            color: white;
-            background-color: rgba(124, 133, 133, 0.9); 
-            padding: 10px;
-        }
-        #small-text {
-            position: absolute;
-            top: 70%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 700px;
-            text-align: center;
-            font-size: 25px;
-            color: white;
-            background-color: rgba(124, 133, 133, 0.8); 
-            padding: 10px;
-            z-index: 3;
-        }
-        #small-text-2 {
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 700px;
-            text-align: center;
-            font-size: 25px;
-            color: white;
-            background-color: rgba(124, 133, 133, 0.8); 
-            padding: 10px;
-            z-index: 3;
-        }
-        /* .country {
-            fill: steelblue;
-            stroke: 'transparent';
-            stroke-width: 1px;
-            cursor: pointer;
-            opacity: 0.8;
-        } */
-
-    </style>
 </head>
 
 <body>
@@ -528,6 +444,82 @@
 
                 })
             }  
+
+            async function electricityGraphMaker(dataPath, svgID) {
+                const raw = await d3.csv(dataPath, d3.autoType);
+
+                const years = Object.keys(raw[0])
+                                    .filter(k => k !== "Type")
+                                    .map(Number);
+
+                const data = years.map(year => {
+                    const entry = { Year: year };
+                    raw.forEach(row => {
+                        entry[row.Type] = row[year];
+                    });
+                    return entry;
+                });
+
+                console.log(data)
+                const svg = d3.select(svgID);
+                const width = +svg.attr("width");
+                const height = +svg.attr("height");
+                const margin = {top: 10, right: 10, bottom: 50, left: 50};
+
+                const chartWidth = width - margin.left - margin.right;
+                const chartHeight = height - margin.top - margin.bottom;
+
+                let annotations = svg.append("g").attr("id","annotations");
+                  
+                let chartArea = svg.append("g").attr("id","points")
+                  .attr("transform","translate("+margin.left+","+margin.top+")");
+
+                const groups = ["Fossil fuels", "Nuclear", "Renewables", "Year"];
+                const filteredData = data.map( d => 
+                    Object.fromEntries(
+                        Object.entries(d).filter(([key]) => groups.includes(key))
+                    )
+                )
+                console.log(filteredData)
+
+                console.log(years)
+                const yearScale = d3.scaleBand().domain(years)
+                                                .range([0, chartWidth])
+                                                .padding([0.2])
+
+                annotations.append("g")
+                            .attr("transform","translate("+margin.left+","+(chartHeight+margin.top+10)+")")
+                            .call(d3.axisBottom(yearScale).tickSizeOuter(0));
+
+                const energyScale = d3.scaleLinear().domain([0, 1200])
+                                                    .range([chartHeight, 0]);
+                
+                annotations.append("g")
+                            .attr("transform","translate("+(margin.left-10)+","+margin.top+")")
+
+                            .call(d3.axisLeft(energyScale));
+                
+                const colorScale = d3.scaleOrdinal()
+                                .domain(groups)
+                                .range(["black", "blue", "green"])
+
+                let stackedData = d3.stack()
+                                      .keys(groups)
+                                      (filteredData)
+
+                stackedData = stackedData.filter(function (d) {return !(d.key == "Year")})
+                
+                chartArea.append("g").selectAll("g").data(stackedData).join("g")
+                   .attr("fill", d => colorScale(d.key)).selectAll('rect').data(d => d).join("rect")
+                        .attr("x", d => yearScale(d.data.Year))
+                        .attr("y", d => energyScale(d[1]))
+                        .attr("height", d => energyScale(d[0]) - energyScale(d[1]))
+                        .attr("width", yearScale.bandwidth());
+
+                   
+            }
+            electricityGraphMaker("germany_energy.csv", "svg#german-energy");
+            electricityGraphMaker("russian_energy.csv", "svg#russian-energy");
 
         }
         requestData();
