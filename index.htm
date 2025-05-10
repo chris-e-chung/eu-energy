@@ -17,10 +17,6 @@
     <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
 
     <style>
-        .body {
-            background-color: rgb(188, 207, 207);
-            background: rgb(188, 207, 207);
-        }
         #map { 
             width: 100vw;
             height: 700px; 
@@ -38,8 +34,6 @@
             top: 0;
             left: 0;
             z-index: 1;
-            fill: rgb(73, 143, 201);
-            background-color: rgb(188, 207, 207);
         }
         .bubble { 
             fill: orange; 
@@ -61,7 +55,7 @@
         }
         #big-text {
             position: absolute;
-            top: 40%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%); /* centers the element */
             z-index: 3;
@@ -71,22 +65,9 @@
             background-color: rgba(124, 133, 133, 0.9); 
             padding: 10px;
         }
-        #big-text-2 {
-            position: absolute;
-            top: 150%;
-            left: 15%;
-            transform: translate(-50%, -50%); /* centers the element */
-            z-index: 3;
-            text-align: center;
-            font-size: 50px;
-            color: white;
-            background-color: rgba(124, 133, 133, 0.9); 
-            padding: 10px;
-        }
         #small-text {
             position: absolute;
             top: 70%;
-            line-height: 1.3;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 700px;
@@ -99,40 +80,11 @@
         }
         #small-text-2 {
             position: absolute;
-            top: 90%;
-            line-height: 1.3;
+            top: 100%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 700px;
             text-align: center;
-            font-size: 25px;
-            color: white;
-            background-color: rgba(124, 133, 133, 0.8); 
-            padding: 10px;
-            z-index: 3;
-        }
-        #small-text-3 {
-            position: absolute;
-            top: 180%;
-            line-height: 1.5;
-            left: 12%;
-            transform: translate(-50%, -50%);
-            width: 400px;
-            text-align: left;
-            font-size: 25px;
-            color: white;
-            background-color: rgba(124, 133, 133, 0.8); 
-            padding: 10px;
-            z-index: 3;
-        }
-        #small-text-4 {
-            position: absolute;
-            top: 290%;
-            line-height: 1.5;
-            left: 12%;
-            transform: translate(-50%, -50%);
-            width: 400px;
-            text-align: left;
             font-size: 25px;
             color: white;
             background-color: rgba(124, 133, 133, 0.8); 
@@ -152,14 +104,25 @@
 
 <body>
     <svg id="worldmap" width="1560" height="750"></svg>
-    <div id='big-text'>The Energy Problem</div>
-    <div id='small-text'>145. This is the number of countries that have pledged to become carbon neutral by some point in the future. This is no doubt a massive step forward globally, but how exactly will this happen? Many of us know investing more into renewables is the main way, but what about regions or countries that don't have access to renewable resources? What about the massive issue of renewables being intermittent and not consistent?"</div>
-    <div id='small-text-2'>This goal of this visualization is to visually introduce the global energy trade, and how understanding this is vital for understanding carbon neutrality. We will investigate the European Union, which has pledged to become carbon neutral by 2050. </div>
-    <div id='big-text-2'>Current Natural Gas Imports</div>
-
-    <div id='small-text-3'> These links show the EU's import of liquified natural gas. The thickness and color of the link indicates volume. According to the Council of the European Union, this number is over 100 billion cubic meters per year. This visualization shows how much the EU is currently relying on traditional forms of energy. How will renewables over a million gigawatt hours? (1 GW could powers 876,000 households for one year)</div>
-    <div id='small-text-4'> Hover over the green dots to see exports of electricity from a certain country. Countries trade based on prices on the energy market. This electricity can be from renewable and non-renewable sources, but this trade is what will inevitably lead to the EU to becoming more and more carbon neutral. 
+    <div id='big-text' class="text-box">An Intro to the Energy Trade</div>
+    <div id='small-text' class="text-box">
+        The goal of our visualization is to explore the international trade of energy,
+         electricity, renewables, and the natural gas trade, specifically in Europe."
     </div>
+    <div id='small-text-2' class="text-box">
+        First, we start with a big, complicated overview. Then we zoom to focus on a specific country to
+        look at an example. Say, Germany.
+    </div>
+
+    <div id="german-div" class="text-box" style="top: 4000px">
+        <h3>German Energy Production</h3>
+        <svg id="german-energy" width="1000" height="500"></svg>
+    </div>
+    <div id="russian-div" class="text-box" style="top: 4000px">
+        <h3>Russian Energy Production</h3>
+        <svg id="russian-energy" width="1000" height="500"></svg>
+    </div>
+
     <div id='map'> </div>
     <div id='space'> </div> <!--- big grey box-->
 
@@ -170,50 +133,12 @@
 
 
     <script>
-
         const southWest = L.latLng(40.351254, -79.879532);
         const northEast = L.latLng(40.52998, -80.108871);
         bounds = L.latLngBounds(southWest, northEast);
 
         const requestData = async function () {
             var raw_EU_to_world_liquid = await d3.csv("imports_of_gas_liquied_EU.csv", d3.autoType)
-            // // Create Map Var, setting max bounds of the map
-            // var map = L.map('map').setView([36.031332, -19.698584], 3);
-
-            // // NORMAL 
-            // // var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            // //     maxZoom: 19,
-            // //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            // // }).addTo(map);
-            
-            // //    ELECTRICITY AT NIGHT - WORKS - start with this and then move to diff
-            // var tiles = L.tileLayer('https://map1.vis.earthdata.nasa.gov/wmts-webmerc/VIIRS_CityLights_2012/default/{time}/{tilematrixset}{maxZoom}/{z}/{y}/{x}.{format}', {
-            //     attribution: 'Imagery provided by services from the Global Imagery Browse Services (GIBS), operated by the NASA/GSFC/Earth Science Data and Information System (<a href="https://earthdata.nasa.gov">ESDIS</a>) with funding provided by NASA/HQ.',
-            //     bounds: [[-85.0511287776, -179.999999975], [85.0511287776, 179.999999975]],
-            //     minZoom: 1,
-            //     maxZoom: 8,
-            //     format: 'jpg',
-            //     time: '',
-            //     tilematrixset: 'GoogleMapsCompatible_Level'
-            // }).addTo(map);
-
-            // // DARK - WORKS - hard to read
-            // var tilesBlack = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            //     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-            //     subdomains: 'abcd',
-            //     maxZoom: 20
-            // });
-
-            // var popup = L.popup();
-            //     function onMapClick(e) {
-            //         popup
-            //             .setLatLng(e.latlng)
-            //             .setContent(e.latlng.toString())
-            //             .openOn(map);
-            //     }
-            //     map.on('click', onMapClick);
-
-            /// ------------------------------------------------------------------------ 
 
             let svg = d3.select("#worldmap")
 
@@ -227,34 +152,54 @@
             const projection = d3.geoMercator()
                             .scale((width / 2 / Math.PI))  // sensible global scale
                             .translate([width / 2, height / 2]);
-
             const path = d3.geoPath().projection(projection);
 
-            // let mouseOver = function(d) {
-            //     d3.selectAll(".country")
+
+            const tooltip = d3.select("body")
+                .append("div")
+                .style("position", "absolute")
+                .style("background-color", "white")
+                .style("padding", "5px 10px")
+                .style("border", "1px solid #ccc")
+                .style("border-radius", "4px")
+                .style("pointer-events", "none")
+                .style("z-index", "7")
+                .style("opacity", 0);
+
+            let mouseOverCountry = function(event, d) {
+                // d3.selectAll(".country")
                 // .transition()
                 // .duration(200)
-            //     .style("opacity", '.5')
-            //     d3.select(this)
-            //     .transition()
-            //     .duration(200)
-            //     .style("opacity", "1")
-            //     .style("stroke", "black")
-            // }
+                // .style("opacity", '1')
+                d3.select(this)
+                .transition()
+                .duration(200)
+                .style("opacity", "1")
+                .style("stroke", "black")
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 1);
+                tooltip.html(d.properties.name)
+                    .style("left", (event.pageX + 5) + "px")
+                    .style("top", (event.pageY - 35) + "px");
+            }
+            let mouseLeaveCountry = function(event, d) {
+                // d3.selectAll(".country")
+                // .transition()
+                // .duration(200)
+                // .style("opacity", '.8')
+                // .style("stroke", "white")
+                d3.select(this)
+                .transition()
+                .duration(200)
+                .style("opacity", ".8")
+                .style("stroke", "white")
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 0);
+            }
 
-            // let mouseLeave = function(d) {
-            //     d3.selectAll(".country")
-            //     .transition()
-            //     .duration(200)
-            //     .style("opacity", '.8')
-            //     .style("stroke", "white")
-            //     d3.select(this)
-            //     .transition()
-            //     .duration(200)
-            //     .style("stroke", "white")
-            // }
-
-
+            // creating the map
             d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function(data) {
                 svg.append("g")
                     .selectAll("path")
@@ -267,28 +212,26 @@
                     .style("stroke-width", '.5px')
                     .style("fill", "steelblue")
                     .style("opacity", ".8")
-                    // .on("mouseover", mouseOver )
-                    // .on("mouseleave", mouseLeave )
+                    .on("mouseover", mouseOverCountry )
+                    .on("mouseleave", mouseLeaveCountry)
                     .on("click", function(event, d) {
                         alert("Country: " + d.properties.name);
                     });
             });
-            
+
 
             const zoom = d3.zoom().scaleExtent([1, 8]).on("zoom", zoomed);
-
+            // would allow controllable zooming
             // svg.call(zoom);
-            
             function zoomed(event) {
                 svg.attr("transform", event.transform);
             }
 
-
-
             // scroll even listener
             let hasZoomed = false;
-            let zoomLevel = 0;  // 0 = world, 1 = moderate zoom, 2 = full zoom
+            let zoomLevel = 0;  
             window.addEventListener('scroll', () => {
+                // trigger heights
                 const trigger1 = window.innerHeight * 0.5;
                 const trigger2 = window.innerHeight * 1.4;
 
@@ -313,7 +256,10 @@
                 }
             });
 
-                // zooms to a country
+                // Zooms to a country 
+                // countryName: name of the country to zoom to in normal Enlighs form
+                // scale: zoom level, higher is more zoomed
+                // up: how much to move the view up given this function is jank
                 function scrollZoomToCountry(countryName, scale, up) {
                         svg.transition().duration(1000).call(
                             zoom.transform,
@@ -324,10 +270,11 @@
                         );
                     };
 
+            // resets zoom form to zoomIdentity original zoom
             function zoomOutToWorld() {
                 svg.transition().duration(1000).call(
                     zoom.transform,
-                    d3.zoomIdentity // original zoom
+                    d3.zoomIdentity 
                 );
             }
 
@@ -350,10 +297,7 @@
                     .style("opacity", 0)
                     // .style("z-index", 0);
                 d3.selectAll(".endCircle")
-                    .transition()
-                    .duration(300)
-                    .style("opacity", 0);
-                d3.selectAll(".circle")
+                    .attr('class', "endCircle")
                     .transition()
                     .duration(300)
                     .style("opacity", 0);
@@ -363,7 +307,7 @@
                     .style("opacity", 0);
             }
 
-            // creates first trade links between EU and the world
+            // creates first trade links between EU and the world in view 1
             function EUGasTradeLink() {
                 Promise.all([
                         d3.csv("imports_of_gas_liquied_EU.csv", d3.autoType),
@@ -389,7 +333,7 @@
                             .filter(d => d !== null);
 
                             tradeLinks.forEach(d => {
-                                        d.strokeWidth = Math.sqrt(d.value) / 500;  // or adjust scale as needed
+                                        d.strokeWidth = Math.sqrt(d.value) / 500 + 5;  // or adjust scale as needed
                                     });
 
 
@@ -502,87 +446,88 @@
                             .append("circle")
                             .attr("cx", d => projection(d.target)[0])
                             .attr("cy", d => projection(d.target)[1])
+                            .attr("class", "endCircle")  ////
                             .attr("r", d => d.strokeWidth)
                             .style("fill", d => colorScale(d.strokeWidth))
                             .style("opacity", 0.6);
                         });
 
                     }
+                    
+            // creates hoverable links in view 2
+            function ElectricityTradeLinksOnHover() {
+                Promise.all([
+                    d3.csv("EU_trade_electricity.csv", d3.autoType),
+                    d3.csv("country-coord.csv", d3.autoType)
+                ]).then(([tradeData, countryCoords]) => {
+                    const svg = d3.select("svg");
+                    const linkGroup = svg.append("g").attr("id", "electricity-links");
 
-                    function ElectricityTradeLinksOnHover() {
-                        Promise.all([
-                            d3.csv("EU_trade_electricity.csv", d3.autoType),
-                            d3.csv("country-coord.csv", d3.autoType)
-                        ]).then(([tradeData, countryCoords]) => {
-                            const svg = d3.select("svg");
-                            const linkGroup = svg.append("g").attr("id", "electricity-links");
+                    // Filter: only 2023, non-zero
+                    const filteredData = tradeData.filter(d =>
+                        d.TIME_PERIOD === 2023 &&
+                        d.OBS_VALUE !== 0 &&
+                        d.siec === "Electricity"
+                    );
 
-                            // Filter: only 2023, non-zero
-                            const filteredData = tradeData.filter(d =>
-                                d.TIME_PERIOD === 2023 &&
-                                d.OBS_VALUE !== 0 &&
-                                d.siec === "Electricity"
-                            );
+                    console.log(filteredData)
 
-                            console.log(filteredData)
+                    const tradeLinks = filteredData.map(d => {
+                        const from = countryCoords.find(c => c.Country === d.partner);
+                        const to = countryCoords.find(c => c.Country === d.geo);
+                        if (!from || !to) return null;
+                        return {
+                            partner: d.partner,
+                            geo: d.geo,
+                            source: [from["Longitude (average)"], from["Latitude (average)"]],
+                            target: [to["Longitude (average)"], to["Latitude (average)"]],
+                            value: d.OBS_VALUE
+                        };
+                    }).filter(d => d !== null);
 
-                            const tradeLinks = filteredData.map(d => {
-                                const from = countryCoords.find(c => c.Country === d.partner);
-                                const to = countryCoords.find(c => c.Country === d.geo);
-                                if (!from || !to) return null;
-                                return {
-                                    partner: d.partner,
-                                    geo: d.geo,
-                                    source: [from["Longitude (average)"], from["Latitude (average)"]],
-                                    target: [to["Longitude (average)"], to["Latitude (average)"]],
-                                    value: d.OBS_VALUE
-                                };
-                            }).filter(d => d !== null);
+                    // Create transparent hover circles over each unique "partner" country
+                    const uniquePartners = Array.from(new Set(tradeLinks.map(d => d.partner)));
+                    const partnerCoords = uniquePartners.map(name => {
+                        const match = countryCoords.find(c => c.Country === name);
+                        return match ? { Country: name, coords: [match["Longitude (average)"], match["Latitude (average)"]] } : null;
+                    }).filter(d => d !== null);
 
-                            // Create transparent hover circles over each unique "partner" country
-                            const uniquePartners = Array.from(new Set(tradeLinks.map(d => d.partner)));
-                            const partnerCoords = uniquePartners.map(name => {
-                                const match = countryCoords.find(c => c.Country === name);
-                                return match ? { Country: name, coords: [match["Longitude (average)"], match["Latitude (average)"]] } : null;
-                            }).filter(d => d !== null);
+                    svg.selectAll(".partner-hover")
+                            .data(partnerCoords)
+                            .join("circle")
+                            .attr("class", "partner-hover")
+                            .attr("r", 3)
+                            .attr("fill", "green")
+                            .attr("cx", d => projection(d.coords)[0])
+                            .attr("cy", d => projection(d.coords)[1])
+                            .on("mouseover", function(event, d) {
+                                const hoveredPartner = d.Country;
+                                const outgoing = tradeLinks.filter(link => link.partner === hoveredPartner);
 
-                            svg.selectAll(".partner-hover")
-                                    .data(partnerCoords)
-                                    .join("circle")
-                                    .attr("class", "partner-hover")
-                                    .attr("r", 3)
-                                    .attr("fill", "green")
-                                    .attr("cx", d => projection(d.coords)[0])
-                                    .attr("cy", d => projection(d.coords)[1])
-                                    .on("mouseover", function(event, d) {
-                                        const hoveredPartner = d.Country;
-                                        const outgoing = tradeLinks.filter(link => link.partner === hoveredPartner);
+                                linkGroup.selectAll("line").remove();
 
-                                        linkGroup.selectAll("line").remove();
+                                linkGroup.selectAll("line")
+                                    .data(outgoing)
+                                    .join("line")
+                                    .attr("x1", d => projection(d.source)[0])
+                                    .attr("y1", d => projection(d.source)[1])
+                                    .attr("x2", d => projection(d.target)[0])
+                                    .attr("y2", d => projection(d.target)[1])
+                                    .attr("stroke", "orange")
+                                    .attr("stroke-width", d => Math.sqrt(d.value) / 20)
+                                    .attr("opacity", 0.8)
+                                    .style('color', 'yellow');
+                            })
+                            .on("mouseout", () => {
+                                linkGroup.selectAll("line")
+                                .transition()
+                                .duration(200)
+                                // .remove();
+                                .style("opacity", 0);
+                            });
 
-                                        linkGroup.selectAll("line")
-                                            .data(outgoing)
-                                            .join("line")
-                                            .attr("x1", d => projection(d.source)[0])
-                                            .attr("y1", d => projection(d.source)[1])
-                                            .attr("x2", d => projection(d.target)[0])
-                                            .attr("y2", d => projection(d.target)[1])
-                                            .attr("stroke", "orange")
-                                            .attr("stroke-width", d => Math.sqrt(d.value) / 20)
-                                            .attr("opacity", 0.8)
-                                            .style('color', 'yellow');
-                                    })
-                                    .on("mouseout", () => {
-                                        linkGroup.selectAll("line")
-                                        .transition()
-                                        .duration(200)
-                                        // .remove();
-                                        .style("opacity", 0);
-                                    });
-
-                        })
-                    }  
-                    // ElectricityTradeLinksOnHover()
+                })
+            }  
 
         }
         requestData();
