@@ -30,7 +30,7 @@
         look at an example. Say, Germany.
     </div>
 
-    <div id="german-div" class="text-box">
+    <div id="german-div" class="text-box" style="top: 4000px">
         <h3>German Energy Production</h3>
         <svg id="german-energy" width="1000" height="500"></svg>
     </div>
@@ -46,9 +46,11 @@
     <div id='map'> </div>
     <div id='space'> </div> <!--- big grey box-->
 
-    <div id="quantityBox" style="position: fixed; top: 10px; right: 10px; background-color: rgba(0, 0, 0, 0.7); color: white; padding: 10px; border-radius: 5px; font-size: 14px; opacity: 0;">
+    <div id="quantityBox" style="position: fixed; top: 40px; z-index: 5; right: 10px; background-color: rgba(0, 0, 0, 0.7); color: white; padding: 10px; border-radius: 5px; font-size: 14px; opacity: 0;">
         <strong>Quantity:</strong> <span id="quantityValue">0</span>
     </div>
+    <div id="tooltip" style="position: fixed; visibility: hidden; background-color: white; padding: 5px; border: 1px solid black; border-radius: 5px; font-size: 12px;"></div>
+
 
     <script>
         const southWest = L.latLng(40.351254, -79.879532);
@@ -70,34 +72,54 @@
             const projection = d3.geoMercator()
                             .scale((width / 2 / Math.PI))  // sensible global scale
                             .translate([width / 2, height / 2]);
-
             const path = d3.geoPath().projection(projection);
 
-            // let mouseOver = function(d) {
-            //     d3.selectAll(".country")
-            //     .transition()
-            //     .duration(200)
-            //     .style("opacity", '.5')
-            //     d3.select(this)
-            //     .transition()
-            //     .duration(200)
-            //     .style("opacity", "1")
-            //     .style("stroke", "black")
-            // }
 
-            // let mouseLeave = function(d) {
-            //     d3.selectAll(".country")
-            //     .transition()
-            //     .duration(200)
-            //     .style("opacity", '.8')
-            //     .style("stroke", "white")
-            //     d3.select(this)
-            //     .transition()
-            //     .duration(200)
-            //     .style("stroke", "white")
-            // }
+            const tooltip = d3.select("body")
+                .append("div")
+                .style("position", "absolute")
+                .style("background-color", "white")
+                .style("padding", "5px 10px")
+                .style("border", "1px solid #ccc")
+                .style("border-radius", "4px")
+                .style("pointer-events", "none")
+                .style("z-index", "7")
+                .style("opacity", 0);
 
+            let mouseOverCountry = function(event, d) {
+                // d3.selectAll(".country")
+                // .transition()
+                // .duration(200)
+                // .style("opacity", '1')
+                d3.select(this)
+                .transition()
+                .duration(200)
+                .style("opacity", "1")
+                .style("stroke", "black")
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 1);
+                tooltip.html(d.properties.name)
+                    .style("left", (event.pageX + 5) + "px")
+                    .style("top", (event.pageY - 35) + "px");
+            }
+            let mouseLeaveCountry = function(event, d) {
+                // d3.selectAll(".country")
+                // .transition()
+                // .duration(200)
+                // .style("opacity", '.8')
+                // .style("stroke", "white")
+                d3.select(this)
+                .transition()
+                .duration(200)
+                .style("opacity", ".8")
+                .style("stroke", "white")
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 0);
+            }
 
+            // creating the map
             d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function(data) {
                 svg.append("g")
                     .selectAll("path")
@@ -110,39 +132,40 @@
                     .style("stroke-width", '.5px')
                     .style("fill", "steelblue")
                     .style("opacity", ".8")
-                    // .on("mouseover", mouseOver )
-                    // .on("mouseleave", mouseLeave )
+                    .on("mouseover", mouseOverCountry )
+                    .on("mouseleave", mouseLeaveCountry)
                     .on("click", function(event, d) {
                         alert("Country: " + d.properties.name);
                     });
             });
-            
+
 
             const zoom = d3.zoom().scaleExtent([1, 8]).on("zoom", zoomed);
-
+            // would allow controllable zooming
             // svg.call(zoom);
-            
             function zoomed(event) {
                 svg.attr("transform", event.transform);
             }
 
             // scroll even listener
             let hasZoomed = false;
-            let zoomLevel = 0;  // 0 = world, 1 = moderate zoom, 2 = full zoom
+            let zoomLevel = 0;  
             window.addEventListener('scroll', () => {
+                // trigger heights
                 const trigger1 = window.innerHeight * 0.5;
                 const trigger2 = window.innerHeight * 1.4;
 
                 if (window.scrollY > trigger2 && zoomLevel < 2) {
                     // Scroll far down → Full zoom
                     zoomLevel = 2;
-                    scrollZoomToCountry("Germany", 3);
-                    EUGasTradeLink();
+                    scrollZoomToCountry("Germany", 3, 80);
+                    hideTradeLinks();
+                    ElectricityTradeLinksOnHover();
                     console.log("Zoom level 2 (full)");
                 } else if (window.scrollY > trigger1 && zoomLevel < 1) {
                     // Scroll halfway down → Moderate zoom
                     zoomLevel = 1;
-                    scrollZoomToCountry("Germany", 1.5);
+                    scrollZoomToCountry("Germany", 1.5, 0);
                     EUGasTradeLink();
                     console.log("Zoom level 1 (moderate)");
                 } else if (window.scrollY < trigger1 - 50 && zoomLevel > 0) {
@@ -153,38 +176,58 @@
                 }
             });
 
-                // zooms to a country
-                function scrollZoomToCountry(countryName, scale) {
+                // Zooms to a country 
+                // countryName: name of the country to zoom to in normal Enlighs form
+                // scale: zoom level, higher is more zoomed
+                // up: how much to move the view up given this function is jank
+                function scrollZoomToCountry(countryName, scale, up) {
                         svg.transition().duration(1000).call(
                             zoom.transform,
                             d3.zoomIdentity
                                 .scale(scale)
                                 .translate(0, height * 0.2) 
+                                .translate(0, up) 
                         );
                     };
 
+            // resets zoom form to zoomIdentity original zoom
             function zoomOutToWorld() {
                 svg.transition().duration(1000).call(
                     zoom.transform,
-                    d3.zoomIdentity // original zoom
+                    d3.zoomIdentity 
                 );
             }
 
+            // const tooltip = d3.select("body")
+            //                 .append("div")
+            //                 .attr("class", "tooltip")
+            //                 .style("position", "absolute")
+            //                 .style("padding", "6px 10px")
+            //                 .style("background", "rgba(0, 0, 0, 0.7)")
+            //                 .style("color", "white")
+            //                 .style("border-radius", "4px")
+            //                 .style("font-size", "12px")
+            //                 .style("pointer-events", "none")
+            //                 .style("opacity", 0);
 
-            const tooltip = d3.select("body")
-                            .append("div")
-                            .attr("class", "tooltip")
-                            .style("position", "absolute")
-                            .style("padding", "6px 10px")
-                            .style("background", "rgba(0, 0, 0, 0.7)")
-                            .style("color", "white")
-                            .style("border-radius", "4px")
-                            .style("font-size", "12px")
-                            .style("pointer-events", "none")
-                            .style("opacity", 0);
+            function hideTradeLinks() {
+                d3.selectAll(".trade-link")
+                    .transition()
+                    .duration(300)
+                    .style("opacity", 0)
+                    // .style("z-index", 0);
+                d3.selectAll(".endCircle")
+                    .attr('class', "endCircle")
+                    .transition()
+                    .duration(300)
+                    .style("opacity", 0);
+                d3.select("#quantityBox")
+                    .transition()
+                    .duration(300)
+                    .style("opacity", 0);
+            }
 
-
-            // creates first trade links between EU and the world
+            // creates first trade links between EU and the world in view 1
             function EUGasTradeLink() {
                 Promise.all([
                         d3.csv("imports_of_gas_liquied_EU.csv", d3.autoType),
@@ -218,65 +261,82 @@
                         const colorScale = d3.scaleSequential()
                             .domain([0, maxWidth])
                             .interpolator(d3.interpolateOranges);  // y
-
+                        
                         const mouseOver = function(event, d) {
-                            const data = this.__data__; 
-                            // Dim all links
-                            d3.selectAll(".trade-link")
-                                .transition()
-                                .duration(200)
-                                .style("opacity", 0.2);
-
-                            // Highlight the hovered link
-                            d3.select(this)
-                                .raise()  // bring to front
-                                .transition()
-                                .duration(200)
-                                .style("opacity", 1);
-                                // .style("stroke", "#000");  // optional: highlight color
-                            // tooltip
-                            //     .html(`<strong>Quantity:</strong> ${d.quantity}`)
-                            //     .style("left", (event.pageX + 10) + "px")
-                            //     .style("top", (event.pageY - 20) + "px")
-                            //     .transition()
-                            //     .duration(200)
-                            //     .style("opacity", 1)
-                            //     .style("z-index", 6);
-                            // console.log(d.quantity)
-                            let amount = d.quantity
-                            const quantityBox = d3.select("#quantityBox");
-                                quantityBox.transition()
+                            if (zoomLevel === 1) {
+                                const data = this.__data__; 
+                                let amount = data.quantity
+                                // Dim all links
+                                d3.selectAll(".trade-link")
+                                    .transition()
                                     .duration(200)
-                                    .style("opacity", 1);  // Make it visible
-                                quantityBox.select("#quantityValue").text(data.quantity + "kg");  // Set the quantity value
+                                    .style("opacity", 0.2);
 
-                                console.log("Quantity:", data.quantity);
+                                // Highlight the hovered link
+                                d3.select(this)
+                                    .raise()  // bring to front
+                                    .transition()
+                                    .duration(200)
+                                    .style("opacity", 1);
+
+                                console.log(amount)
+                                console.log(event.pageX)
+                                console.log(event.pageY)
+                                // tooltip.style("visibility", "visible")
+                                //     .text(amount)
+                                //     .style("left", (event.pageX + 10) + "px")
+                                //     .style("top", (event.pageY - 10) + "px")
+                                //     .transition().duration(300) // 200ms fade-in duration
+                                //     .style("opacity", 1)
+                                //     .style("z-index", 7);
+                                    // .style("stroke", "#000");  // optional: highlight color
+                                // tooltip
+                                //     .html(`<strong>Quantity:</strong> ${d.quantity}`)
+                                //     .style("left", (event.pageX + 10) + "px")
+                                //     .style("top", (event.pageY - 20) + "px")
+                                //     .transition()
+                                //     .duration(200)
+                                //     .style("opacity", 1)
+                                //     .style("z-index", 6);
+                                // console.log(d.quantity)
+                                const quantityBox = d3.select("#quantityBox");
+                                    quantityBox.transition()
+                                        // .style("left", (event.pageX + 10) + "px")        // NOT WORKING FOR SOME FREAKIN REASON 
+                                        // .style("top", (event.pageY - 10) + "px")
+                                        .duration(200)
+                                        .style("opacity", 1)
+                                        // .style("z-index", 0);
+                                        // .style('fill', 'orange');  // Make it visible
+                                    quantityBox.select("#quantityValue").text(data.quantity + "kg");  // Set the quantity value
+                            }
 
                         };
 
                         const mouseLeave = function(event, d) {
+                            if (zoomLevel === 1) {
                             // Reset all links
-                            d3.selectAll(".trade-link")
-                                .transition()
-                                .duration(200)
-                                .style("opacity", 0.8);
+                                d3.selectAll(".trade-link")
+                                    .transition()
+                                    .duration(200)
+                                    .style("opacity", 0.8);
 
-                            // Reset stroke color of this link
-                            d3.select(this)
-                                .transition()
-                                .duration(200)
-                                .style("opacity", 0.8)
-                                .style("stroke", d => colorScale(d.strokeWidth));  // reset to mapped color
-                            tooltip
-                                .transition()
-                                .duration(200)
-                                .style("opacity", 0);
+                                // Reset stroke color of this link
+                                d3.select(this)
+                                    .transition()
+                                    .duration(200)
+                                    .style("opacity", 0.8)
+                                    .style("stroke", d => colorScale(d.strokeWidth));  // reset to mapped color
+                                tooltip
+                                    .transition()
+                                    .duration(200)
+                                    .style("opacity", 0);
 
 
-                            d3.select("#quantityBox")
-                                .transition()
-                                .duration(200)
-                                .style("opacity", 0);
+                                d3.select("#quantityBox")
+                                    .transition()
+                                    .duration(200)
+                                    .style("opacity", 0);
+                            }
                         };
 
                         // Step 3: Draw curved paths
@@ -306,12 +366,88 @@
                             .append("circle")
                             .attr("cx", d => projection(d.target)[0])
                             .attr("cy", d => projection(d.target)[1])
+                            .attr("class", "endCircle")  ////
                             .attr("r", d => d.strokeWidth)
                             .style("fill", d => colorScale(d.strokeWidth))
                             .style("opacity", 0.6);
                         });
 
                     }
+                    
+            // creates hoverable links in view 2
+            function ElectricityTradeLinksOnHover() {
+                Promise.all([
+                    d3.csv("EU_trade_electricity.csv", d3.autoType),
+                    d3.csv("country-coord.csv", d3.autoType)
+                ]).then(([tradeData, countryCoords]) => {
+                    const svg = d3.select("svg");
+                    const linkGroup = svg.append("g").attr("id", "electricity-links");
+
+                    // Filter: only 2023, non-zero
+                    const filteredData = tradeData.filter(d =>
+                        d.TIME_PERIOD === 2023 &&
+                        d.OBS_VALUE !== 0 &&
+                        d.siec === "Electricity"
+                    );
+
+                    console.log(filteredData)
+
+                    const tradeLinks = filteredData.map(d => {
+                        const from = countryCoords.find(c => c.Country === d.partner);
+                        const to = countryCoords.find(c => c.Country === d.geo);
+                        if (!from || !to) return null;
+                        return {
+                            partner: d.partner,
+                            geo: d.geo,
+                            source: [from["Longitude (average)"], from["Latitude (average)"]],
+                            target: [to["Longitude (average)"], to["Latitude (average)"]],
+                            value: d.OBS_VALUE
+                        };
+                    }).filter(d => d !== null);
+
+                    // Create transparent hover circles over each unique "partner" country
+                    const uniquePartners = Array.from(new Set(tradeLinks.map(d => d.partner)));
+                    const partnerCoords = uniquePartners.map(name => {
+                        const match = countryCoords.find(c => c.Country === name);
+                        return match ? { Country: name, coords: [match["Longitude (average)"], match["Latitude (average)"]] } : null;
+                    }).filter(d => d !== null);
+
+                    svg.selectAll(".partner-hover")
+                            .data(partnerCoords)
+                            .join("circle")
+                            .attr("class", "partner-hover")
+                            .attr("r", 3)
+                            .attr("fill", "green")
+                            .attr("cx", d => projection(d.coords)[0])
+                            .attr("cy", d => projection(d.coords)[1])
+                            .on("mouseover", function(event, d) {
+                                const hoveredPartner = d.Country;
+                                const outgoing = tradeLinks.filter(link => link.partner === hoveredPartner);
+
+                                linkGroup.selectAll("line").remove();
+
+                                linkGroup.selectAll("line")
+                                    .data(outgoing)
+                                    .join("line")
+                                    .attr("x1", d => projection(d.source)[0])
+                                    .attr("y1", d => projection(d.source)[1])
+                                    .attr("x2", d => projection(d.target)[0])
+                                    .attr("y2", d => projection(d.target)[1])
+                                    .attr("stroke", "orange")
+                                    .attr("stroke-width", d => Math.sqrt(d.value) / 20)
+                                    .attr("opacity", 0.8)
+                                    .style('color', 'yellow');
+                            })
+                            .on("mouseout", () => {
+                                linkGroup.selectAll("line")
+                                .transition()
+                                .duration(200)
+                                // .remove();
+                                .style("opacity", 0);
+                            });
+
+                })
+            }  
 
             async function electricityGraphMaker(dataPath, svgID) {
                 const raw = await d3.csv(dataPath, d3.autoType);
