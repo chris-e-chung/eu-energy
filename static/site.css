@@ -3,7 +3,7 @@ html, body {
     padding: 0;
     overflow-x: hidden;
 
-    background-color: hsl(from rgb(19, 85, 135) h s 95%);
+    background-color: #F1F0E8;
     color: black;
     font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
 }
@@ -64,8 +64,8 @@ p {
     height: 1000px;
     width: 1000px;
 
-    background-color: white;
-    border: solid black 1px;
+    /* background-color: white;
+    border: solid black 1px; */
 }
 
 .tick line {
