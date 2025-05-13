@@ -1,0 +1,848 @@
+partner,geo,TIME_PERIOD,OBS_VALUE
+Austria,Czechia,2018,112.561
+Austria,Czechia,2019,144.762
+Austria,Czechia,2020,378.42
+Austria,Czechia,2021,197.0
+Austria,Czechia,2022,37.188
+Austria,Czechia,2023,474.125
+Austria,Germany,2018,4793.0
+Austria,Germany,2019,4876.0
+Austria,Germany,2020,6101.0
+Austria,Germany,2021,6507.0
+Austria,Germany,2022,5765.0
+Austria,Germany,2023,9104.0
+Austria,Euro area – 20 countries (from 2023),2018,10306.217
+Austria,Euro area – 20 countries (from 2023),2019,11976.52
+Austria,Euro area – 20 countries (from 2023),2020,12044.145
+Austria,Euro area – 20 countries (from 2023),2021,11750.053
+Austria,Euro area – 20 countries (from 2023),2022,11873.432
+Austria,Euro area – 20 countries (from 2023),2023,13348.544
+Austria,European Union - 27 countries (from 2020),2018,14171.778
+Austria,European Union - 27 countries (from 2020),2019,18345.282
+Austria,European Union - 27 countries (from 2020),2020,18808.565
+Austria,European Union - 27 countries (from 2020),2021,15202.053
+Austria,European Union - 27 countries (from 2020),2022,15482.62
+Austria,European Union - 27 countries (from 2020),2023,17288.669
+Austria,Hungary,2018,3753.0
+Austria,Hungary,2019,6224.0
+Austria,Hungary,2020,6386.0
+Austria,Hungary,2021,3255.0
+Austria,Hungary,2022,3572.0
+Austria,Hungary,2023,3466.0
+Austria,Italy,2018,1417.034
+Austria,Italy,2019,1228.863
+Austria,Italy,2020,1165.707
+Austria,Italy,2021,1257.922
+Austria,Italy,2022,1499.202
+Austria,Italy,2023,1327.461
+Austria,Slovenia,2018,4096.183
+Austria,Slovenia,2019,5871.657
+Austria,Slovenia,2020,4777.438
+Austria,Slovenia,2021,3985.131
+Austria,Slovenia,2022,4609.23
+Austria,Slovenia,2023,2917.083
+Belgium,Euro area – 20 countries (from 2023),2018,4342.843
+Belgium,Euro area – 20 countries (from 2023),2019,8590.664
+Belgium,Euro area – 20 countries (from 2023),2020,8404.062
+Belgium,Euro area – 20 countries (from 2023),2021,14056.649
+Belgium,Euro area – 20 countries (from 2023),2022,18641.466
+Belgium,Euro area – 20 countries (from 2023),2023,11982.739
+Belgium,European Union - 27 countries (from 2020),2018,4342.843
+Belgium,European Union - 27 countries (from 2020),2019,8590.664
+Belgium,European Union - 27 countries (from 2020),2020,8404.062
+Belgium,European Union - 27 countries (from 2020),2021,14056.649
+Belgium,European Union - 27 countries (from 2020),2022,18641.466
+Belgium,European Union - 27 countries (from 2020),2023,11982.739
+Belgium,France,2018,2181.029
+Belgium,France,2019,3822.39
+Belgium,France,2020,4231.967
+Belgium,France,2021,7697.095
+Belgium,France,2022,11841.709
+Belgium,France,2023,5377.0
+Belgium,Luxembourg,2018,386.196
+Belgium,Luxembourg,2019,240.084
+Belgium,Luxembourg,2020,389.934
+Belgium,Luxembourg,2021,1141.441
+Belgium,Luxembourg,2022,1927.255
+Belgium,Luxembourg,2023,2210.75
+Belgium,Netherlands,2018,1775.618
+Belgium,Netherlands,2019,4528.19
+Belgium,Netherlands,2020,3782.161
+Belgium,Netherlands,2021,5218.113
+Belgium,Netherlands,2022,4872.502
+Belgium,Netherlands,2023,4394.989
+Belgium,United Kingdom,2019,5090.905
+Bulgaria,Euro area – 20 countries (from 2023),2018,2118.0
+Bulgaria,Euro area – 20 countries (from 2023),2019,2236.0
+Bulgaria,Euro area – 20 countries (from 2023),2020,1876.0
+Bulgaria,Euro area – 20 countries (from 2023),2021,1971.0
+Bulgaria,Euro area – 20 countries (from 2023),2022,1966.0
+Bulgaria,Euro area – 20 countries (from 2023),2023,2302.0
+Bulgaria,Greece,2018,2118.0
+Bulgaria,Greece,2019,2236.0
+Bulgaria,Greece,2020,1876.0
+Bulgaria,Greece,2021,1971.0
+Bulgaria,Greece,2022,1966.0
+Bulgaria,Greece,2023,2302.0
+Bulgaria,European Union - 27 countries (from 2020),2018,3846.989
+Bulgaria,European Union - 27 countries (from 2020),2019,3668.929
+Bulgaria,European Union - 27 countries (from 2020),2020,3924.373
+Bulgaria,European Union - 27 countries (from 2020),2021,6540.325
+Bulgaria,European Union - 27 countries (from 2020),2022,7548.651
+Bulgaria,European Union - 27 countries (from 2020),2023,6295.078
+Bulgaria,Moldova,2023,1.0
+Bulgaria,North Macedonia,2019,2137.386
+Bulgaria,North Macedonia,2020,2479.616
+Bulgaria,North Macedonia,2021,2912.396
+Bulgaria,North Macedonia,2022,2934.235
+Bulgaria,North Macedonia,2023,2540.386
+Bulgaria,Romania,2018,1728.989
+Bulgaria,Romania,2019,1432.929
+Bulgaria,Romania,2020,2048.373
+Bulgaria,Romania,2021,4569.325
+Bulgaria,Romania,2022,5582.651
+Bulgaria,Romania,2023,3993.078
+Bulgaria,Serbia,2018,2306.534
+Bulgaria,Serbia,2019,1390.482
+Bulgaria,Serbia,2020,789.18
+Bulgaria,Serbia,2021,2710.436
+Bulgaria,Serbia,2022,3219.952
+Bulgaria,Türkiye,2018,2051.283
+Bulgaria,Türkiye,2019,1960.629
+Bulgaria,Türkiye,2020,1689.5
+Bulgaria,Türkiye,2021,1059.227
+Bulgaria,Türkiye,2022,2284.808
+Bulgaria,Türkiye,2023,1284.495
+Czechia,Austria,2018,10864.0
+Czechia,Austria,2019,9431.534
+Czechia,Austria,2020,8687.133
+Czechia,Austria,2021,10917.302
+Czechia,Austria,2022,12576.348
+Czechia,Austria,2023,8412.387
+Czechia,Germany,2018,4903.0
+Czechia,Germany,2019,3445.0
+Czechia,Germany,2020,3172.0
+Czechia,Germany,2021,6083.0
+Czechia,Germany,2022,7079.0
+Czechia,Germany,2023,7509.0
+Czechia,Euro area – 20 countries (from 2023),2018,24729.0
+Czechia,Euro area – 20 countries (from 2023),2019,23095.534
+Czechia,Euro area – 20 countries (from 2023),2020,21843.133
+Czechia,Euro area – 20 countries (from 2023),2021,25884.302
+Czechia,Euro area – 20 countries (from 2023),2022,30184.348
+Czechia,Euro area – 20 countries (from 2023),2023,21838.387
+Czechia,European Union - 27 countries (from 2020),2018,25338.416
+Czechia,European Union - 27 countries (from 2020),2019,24116.9
+Czechia,European Union - 27 countries (from 2020),2020,23707.71
+Czechia,European Union - 27 countries (from 2020),2021,26226.658
+Czechia,European Union - 27 countries (from 2020),2022,30184.348
+Czechia,European Union - 27 countries (from 2020),2023,22635.303
+Czechia,Montenegro,2018,13.7
+Czechia,Poland,2018,609.416
+Czechia,Poland,2019,1021.366
+Czechia,Poland,2020,1864.577
+Czechia,Poland,2021,342.356
+Czechia,Poland,2023,796.916
+Czechia,Slovakia,2018,8962.0
+Czechia,Slovakia,2019,10219.0
+Czechia,Slovakia,2020,9984.0
+Czechia,Slovakia,2021,8884.0
+Czechia,Slovakia,2022,10529.0
+Czechia,Slovakia,2023,5917.0
+Germany,Austria,2018,14998.0
+Germany,Austria,2019,14796.716
+Germany,Austria,2020,13778.252
+Germany,Austria,2021,13027.786
+Germany,Austria,2022,13582.947
+Germany,Austria,2023,9777.632
+Germany,Belgium,2020,327.9
+Germany,Belgium,2021,2560.8
+Germany,Belgium,2022,3210.0
+Germany,Belgium,2023,2459.5
+Germany,Czechia,2018,7580.75
+Germany,Czechia,2019,7352.215
+Germany,Czechia,2020,9077.913
+Germany,Czechia,2021,6221.148
+Germany,Czechia,2022,7073.261
+Germany,Czechia,2023,6357.054
+Germany,Denmark,2018,5848.761
+Germany,Denmark,2019,6587.117
+Germany,Denmark,2020,3437.119
+Germany,Denmark,2021,4360.173
+Germany,Denmark,2022,3242.534
+Germany,Denmark,2023,3069.074
+Germany,Euro area – 20 countries (from 2023),2018,44306.63
+Germany,Euro area – 20 countries (from 2023),2019,34741.999
+Germany,Euro area – 20 countries (from 2023),2020,30609.367
+Germany,Euro area – 20 countries (from 2023),2021,33333.706
+Germany,Euro area – 20 countries (from 2023),2022,37575.287
+Germany,Euro area – 20 countries (from 2023),2023,28390.124
+Germany,European Union - 27 countries (from 2020),2018,65242.771
+Germany,European Union - 27 countries (from 2020),2019,59331.043
+Germany,European Union - 27 countries (from 2020),2020,54745.607
+Germany,European Union - 27 countries (from 2020),2021,52923.922
+Germany,European Union - 27 countries (from 2020),2022,47983.082
+Germany,European Union - 27 countries (from 2020),2023,46377.701
+Germany,France,2018,2530.394
+Germany,France,2019,2468.076
+Germany,France,2020,2757.101
+Germany,France,2021,4189.651
+Germany,France,2022,9159.439
+Germany,France,2023,3966.0
+Germany,Luxembourg,2018,5864.622
+Germany,Luxembourg,2019,5239.605
+Germany,Luxembourg,2020,4998.44
+Germany,Luxembourg,2021,4470.782
+Germany,Luxembourg,2022,4615.256
+Germany,Luxembourg,2023,4072.238
+Germany,Netherlands,2018,20913.614
+Germany,Netherlands,2019,12237.602
+Germany,Netherlands,2020,8747.674
+Germany,Netherlands,2021,9084.687
+Germany,Netherlands,2022,7007.645
+Germany,Netherlands,2023,8114.754
+Germany,Norway,2020,49.053
+Germany,Norway,2021,1106.677
+Germany,Norway,2022,1642.979
+Germany,Norway,2023,1634.589
+Germany,Poland,2018,7054.63
+Germany,Poland,2019,10085.712
+Germany,Poland,2020,11235.208
+Germany,Poland,2021,8733.895
+Germany,Poland,2023,8208.449
+Germany,Sweden,2018,452.0
+Germany,Sweden,2019,564.0
+Germany,Sweden,2020,386.0
+Germany,Sweden,2021,275.0
+Germany,Sweden,2022,92.0
+Germany,Sweden,2023,353.0
+Denmark,Euro area – 20 countries (from 2023),2019,618.508
+Denmark,Euro area – 20 countries (from 2023),2020,2081.881
+Denmark,Euro area – 20 countries (from 2023),2021,3005.54
+Denmark,Euro area – 20 countries (from 2023),2022,2738.318
+Denmark,Euro area – 20 countries (from 2023),2023,2552.293
+Denmark,European Union - 27 countries (from 2020),2018,2795.0
+Denmark,European Union - 27 countries (from 2020),2019,3423.508
+Denmark,European Union - 27 countries (from 2020),2020,3729.881
+Denmark,European Union - 27 countries (from 2020),2021,4769.54
+Denmark,European Union - 27 countries (from 2020),2022,3712.318
+Denmark,European Union - 27 countries (from 2020),2023,4020.293
+Denmark,Montenegro,2018,26.6
+Denmark,Netherlands,2019,618.508
+Denmark,Netherlands,2020,2081.881
+Denmark,Netherlands,2021,3005.54
+Denmark,Netherlands,2022,2738.318
+Denmark,Netherlands,2023,2552.293
+Denmark,Norway,2018,2623.966
+Denmark,Norway,2019,3309.0
+Denmark,Norway,2020,802.238
+Denmark,Norway,2021,1667.761
+Denmark,Norway,2022,2903.79
+Denmark,Norway,2023,2601.153
+Denmark,Sweden,2018,2795.0
+Denmark,Sweden,2019,2805.0
+Denmark,Sweden,2020,1648.0
+Denmark,Sweden,2021,1764.0
+Denmark,Sweden,2022,974.0
+Denmark,Sweden,2023,1468.0
+Estonia,Euro area – 20 countries (from 2023),2018,4098.184
+Estonia,Euro area – 20 countries (from 2023),2019,2955.847
+Estonia,Euro area – 20 countries (from 2023),2020,2037.906
+Estonia,Euro area – 20 countries (from 2023),2021,2963.679
+Estonia,Euro area – 20 countries (from 2023),2022,3902.667
+Estonia,Euro area – 20 countries (from 2023),2023,2411.497
+Estonia,European Union - 27 countries (from 2020),2018,4098.184
+Estonia,European Union - 27 countries (from 2020),2019,2955.847
+Estonia,European Union - 27 countries (from 2020),2020,2037.906
+Estonia,European Union - 27 countries (from 2020),2021,2963.679
+Estonia,European Union - 27 countries (from 2020),2022,3902.667
+Estonia,European Union - 27 countries (from 2020),2023,2411.497
+Estonia,Finland,2018,850.0
+Estonia,Finland,2019,275.0
+Estonia,Finland,2020,22.0
+Estonia,Finland,2021,54.0
+Estonia,Finland,2022,33.0
+Estonia,Finland,2023,45.0
+Estonia,Latvia,2018,3248.184
+Estonia,Latvia,2019,2680.847
+Estonia,Latvia,2020,2015.906
+Estonia,Latvia,2021,2909.679
+Estonia,Latvia,2022,3869.667
+Estonia,Latvia,2023,2366.497
+Greece,Albania,2020,143.356
+Greece,Albania,2021,388.0
+Greece,Albania,2022,1491.331
+Greece,Albania,2023,614.958
+Greece,Bulgaria,2018,7.589
+Greece,Bulgaria,2019,37.677
+Greece,Bulgaria,2020,15.056
+Greece,Bulgaria,2021,64.337
+Greece,Bulgaria,2022,95.103
+Greece,Bulgaria,2023,182.414
+Greece,Euro area – 20 countries (from 2023),2018,1077.679
+Greece,Euro area – 20 countries (from 2023),2019,56.827
+Greece,Euro area – 20 countries (from 2023),2020,317.138
+Greece,Euro area – 20 countries (from 2023),2021,1856.786
+Greece,Euro area – 20 countries (from 2023),2022,1741.311
+Greece,Euro area – 20 countries (from 2023),2023,1988.922
+Greece,European Union - 27 countries (from 2020),2018,1085.268
+Greece,European Union - 27 countries (from 2020),2019,94.504
+Greece,European Union - 27 countries (from 2020),2020,332.194
+Greece,European Union - 27 countries (from 2020),2021,1921.123
+Greece,European Union - 27 countries (from 2020),2022,1836.414
+Greece,European Union - 27 countries (from 2020),2023,2171.336
+Greece,Italy,2018,1077.679
+Greece,Italy,2019,56.827
+Greece,Italy,2020,317.138
+Greece,Italy,2021,1856.786
+Greece,Italy,2022,1741.311
+Greece,Italy,2023,1988.922
+Greece,North Macedonia,2019,789.686
+Greece,North Macedonia,2020,449.664
+Greece,North Macedonia,2021,1104.347
+Greece,North Macedonia,2022,1115.616
+Greece,North Macedonia,2023,517.84
+Greece,Türkiye,2018,10.676
+Greece,Türkiye,2019,3.854
+Greece,Türkiye,2020,30.134
+Greece,Türkiye,2021,20.281
+Greece,Türkiye,2022,21.651
+Greece,Türkiye,2023,107.013
+Spain,Euro area – 20 countries (from 2023),2018,9122.07
+Spain,Euro area – 20 countries (from 2023),2019,11204.494
+Spain,Euro area – 20 countries (from 2023),2020,13733.981
+Spain,Euro area – 20 countries (from 2023),2021,15808.275
+Spain,Euro area – 20 countries (from 2023),2022,25682.415
+Spain,Euro area – 20 countries (from 2023),2023,22704.872
+Spain,European Union - 27 countries (from 2020),2018,9122.07
+Spain,European Union - 27 countries (from 2020),2019,11204.494
+Spain,European Union - 27 countries (from 2020),2020,13733.981
+Spain,European Union - 27 countries (from 2020),2021,15808.275
+Spain,European Union - 27 countries (from 2020),2022,25682.415
+Spain,European Union - 27 countries (from 2020),2023,22704.872
+Spain,France,2018,3454.502
+Spain,France,2019,3105.286
+Spain,France,2020,6180.868
+Spain,France,2021,6263.857
+Spain,France,2022,13367.724
+Spain,France,2023,9049.0
+Spain,Portugal,2018,5667.568
+Spain,Portugal,2019,8099.208
+Spain,Portugal,2020,7553.113
+Spain,Portugal,2021,9544.418
+Spain,Portugal,2022,12314.691
+Spain,Portugal,2023,13655.872
+Finland,Euro area – 20 countries (from 2023),2018,2981.0
+Finland,Euro area – 20 countries (from 2023),2019,4170.0
+Finland,Euro area – 20 countries (from 2023),2020,6916.0
+Finland,Euro area – 20 countries (from 2023),2021,6925.419
+Finland,Euro area – 20 countries (from 2023),2022,7023.61
+Finland,Euro area – 20 countries (from 2023),2023,7307.8
+Finland,Estonia,2018,2981.0
+Finland,Estonia,2019,4170.0
+Finland,Estonia,2020,6916.0
+Finland,Estonia,2021,6925.419
+Finland,Estonia,2022,7023.61
+Finland,Estonia,2023,7307.8
+Finland,European Union - 27 countries (from 2020),2018,3160.0
+Finland,European Union - 27 countries (from 2020),2019,4220.0
+Finland,European Union - 27 countries (from 2020),2020,6917.0
+Finland,European Union - 27 countries (from 2020),2021,6939.419
+Finland,European Union - 27 countries (from 2020),2022,7092.61
+Finland,European Union - 27 countries (from 2020),2023,8191.8
+Finland,Norway,2018,75.607
+Finland,Norway,2019,57.0
+Finland,Norway,2020,39.336
+Finland,Norway,2021,18.803
+Finland,Norway,2022,8.356
+Finland,Norway,2023,14.574
+Finland,Sweden,2018,179.0
+Finland,Sweden,2019,50.0
+Finland,Sweden,2020,1.0
+Finland,Sweden,2021,14.0
+Finland,Sweden,2022,69.0
+Finland,Sweden,2023,884.0
+France,Belgium,2018,10755.0
+France,Belgium,2019,6613.2
+France,Belgium,2020,5033.9
+France,Belgium,2021,5119.8
+France,Belgium,2022,1996.7
+France,Belgium,2023,8343.4
+France,Germany,2018,10983.0
+France,Germany,2019,15589.0
+France,Germany,2020,12965.0
+France,Germany,2021,9758.0
+France,Germany,2022,3713.0
+France,Germany,2023,13266.0
+France,Euro area – 20 countries (from 2023),2018,53939.948
+France,Euro area – 20 countries (from 2023),2019,51597.871
+France,Euro area – 20 countries (from 2023),2020,44379.112
+France,Euro area – 20 countries (from 2023),2021,43108.357
+France,Euro area – 20 countries (from 2023),2022,24790.275
+France,Euro area – 20 countries (from 2023),2023,48467.113
+France,Spain,2018,15514.0
+France,Spain,2019,12813.153
+France,Spain,2020,11421.711
+France,Spain,2021,11931.251
+France,Spain,2022,4549.001
+France,Spain,2023,7432.482
+France,European Union - 27 countries (from 2020),2018,53939.948
+France,European Union - 27 countries (from 2020),2019,51597.871
+France,European Union - 27 countries (from 2020),2020,44379.112
+France,European Union - 27 countries (from 2020),2021,43108.357
+France,European Union - 27 countries (from 2020),2022,24790.275
+France,European Union - 27 countries (from 2020),2023,48467.113
+France,Italy,2018,15385.754
+France,Italy,2019,15244.687
+France,Italy,2020,13803.382
+France,Italy,2021,15153.059
+France,Italy,2022,14397.165
+France,Italy,2023,19318.097
+France,Luxembourg,2018,1302.194
+France,Luxembourg,2019,1337.831
+France,Luxembourg,2020,1155.119
+France,Luxembourg,2021,1146.247
+France,Luxembourg,2022,134.409
+France,Luxembourg,2023,107.134
+France,United Kingdom,2018,13286.841
+France,United Kingdom,2019,11875.345
+Croatia,Bosnia and Herzegovina,2018,986.0
+Croatia,Bosnia and Herzegovina,2019,1809.0
+Croatia,Bosnia and Herzegovina,2020,2595.0
+Croatia,Bosnia and Herzegovina,2021,1781.0
+Croatia,Bosnia and Herzegovina,2022,1672.0
+Croatia,Bosnia and Herzegovina,2023,2063.0
+Croatia,Euro area – 20 countries (from 2023),2018,4774.042
+Croatia,Euro area – 20 countries (from 2023),2019,2904.323
+Croatia,Euro area – 20 countries (from 2023),2020,1919.405
+Croatia,Euro area – 20 countries (from 2023),2021,4328.128
+Croatia,Euro area – 20 countries (from 2023),2022,4444.386
+Croatia,Euro area – 20 countries (from 2023),2023,4696.206
+Croatia,European Union - 27 countries (from 2020),2018,5499.042
+Croatia,European Union - 27 countries (from 2020),2019,3058.323
+Croatia,European Union - 27 countries (from 2020),2020,2295.405
+Croatia,European Union - 27 countries (from 2020),2021,5102.128
+Croatia,European Union - 27 countries (from 2020),2022,4680.386
+Croatia,European Union - 27 countries (from 2020),2023,5403.206
+Croatia,Hungary,2018,725.0
+Croatia,Hungary,2019,154.0
+Croatia,Hungary,2020,376.0
+Croatia,Hungary,2021,774.0
+Croatia,Hungary,2022,236.0
+Croatia,Hungary,2023,707.0
+Croatia,Serbia,2018,47.066
+Croatia,Serbia,2019,369.064
+Croatia,Serbia,2020,542.12
+Croatia,Serbia,2021,275.65
+Croatia,Serbia,2022,290.236
+Croatia,Slovenia,2018,4774.042
+Croatia,Slovenia,2019,2904.323
+Croatia,Slovenia,2020,1919.405
+Croatia,Slovenia,2021,4328.128
+Croatia,Slovenia,2022,4444.386
+Croatia,Slovenia,2023,4696.206
+Hungary,Austria,2018,591.0
+Hungary,Austria,2019,38.869
+Hungary,Austria,2020,101.816
+Hungary,Austria,2021,714.581
+Hungary,Austria,2022,757.027
+Hungary,Austria,2023,946.116
+Hungary,Euro area – 20 countries (from 2023),2018,3401.4
+Hungary,Euro area – 20 countries (from 2023),2019,4319.269
+Hungary,Euro area – 20 countries (from 2023),2020,3363.016
+Hungary,Euro area – 20 countries (from 2023),2021,4141.381
+Hungary,Euro area – 20 countries (from 2023),2022,6753.003
+Hungary,Euro area – 20 countries (from 2023),2023,5566.166
+Hungary,European Union - 27 countries (from 2020),2018,4545.749
+Hungary,European Union - 27 countries (from 2020),2019,6159.537
+Hungary,European Union - 27 countries (from 2020),2020,5882.904
+Hungary,European Union - 27 countries (from 2020),2021,6427.501
+Hungary,European Union - 27 countries (from 2020),2022,8868.308
+Hungary,European Union - 27 countries (from 2020),2023,8863.143
+Hungary,Croatia,2018,2750.4
+Hungary,Croatia,2019,4236.4
+Hungary,Croatia,2020,3204.2
+Hungary,Croatia,2021,3316.8
+Hungary,Croatia,2022,4789.5
+Hungary,Croatia,2023,2687.7
+Hungary,Romania,2018,1144.349
+Hungary,Romania,2019,1840.268
+Hungary,Romania,2020,2519.888
+Hungary,Romania,2021,2286.12
+Hungary,Romania,2022,2115.305
+Hungary,Romania,2023,3296.977
+Hungary,Serbia,2018,271.972
+Hungary,Serbia,2019,764.324
+Hungary,Serbia,2020,957.05
+Hungary,Serbia,2021,562.955
+Hungary,Serbia,2022,741.745
+Hungary,Slovenia,2022,1121.476
+Hungary,Slovenia,2023,1472.35
+Hungary,Slovakia,2018,60.0
+Hungary,Slovakia,2019,44.0
+Hungary,Slovakia,2020,57.0
+Hungary,Slovakia,2021,110.0
+Hungary,Slovakia,2022,85.0
+Hungary,Slovakia,2023,460.0
+Hungary,Ukraine,2019,398.8
+Hungary,Ukraine,2020,748.6
+Ireland,United Kingdom,2018,1653.688
+Ireland,United Kingdom,2019,1539.913
+Italy,Austria,2018,25.0
+Italy,Austria,2019,1.874
+Italy,Austria,2020,9.776
+Italy,Austria,2021,12.437
+Italy,Austria,2022,9.058
+Italy,Austria,2023,9.744
+Italy,Euro area – 20 countries (from 2023),2018,2127.628
+Italy,Euro area – 20 countries (from 2023),2019,4814.771
+Italy,Euro area – 20 countries (from 2023),2020,4643.384
+Italy,Euro area – 20 countries (from 2023),2021,2333.107
+Italy,Euro area – 20 countries (from 2023),2022,2931.139
+Italy,Euro area – 20 countries (from 2023),2023,2284.107
+Italy,Greece,2018,611.0
+Italy,Greece,2019,2965.0
+Italy,Greece,2020,2633.0
+Italy,Greece,2021,517.0
+Italy,Greece,2022,1053.0
+Italy,Greece,2023,644.0
+Italy,European Union - 27 countries (from 2020),2018,2127.628
+Italy,European Union - 27 countries (from 2020),2019,4814.771
+Italy,European Union - 27 countries (from 2020),2020,4643.384
+Italy,European Union - 27 countries (from 2020),2021,2333.107
+Italy,European Union - 27 countries (from 2020),2022,2931.139
+Italy,European Union - 27 countries (from 2020),2023,2284.107
+Italy,France,2018,800.321
+Italy,France,2019,945.848
+Italy,France,2020,1157.691
+Italy,France,2021,1182.526
+Italy,France,2022,1199.792
+Italy,France,2023,953.598
+Italy,Montenegro,2020,1049.0
+Italy,Montenegro,2021,189.5
+Italy,Montenegro,2022,421.991
+Italy,Montenegro,2023,51.872
+Italy,Malta,2018,631.293
+Italy,Malta,2019,656.756
+Italy,Malta,2020,419.81
+Italy,Malta,2021,547.25
+Italy,Malta,2022,646.139
+Italy,Malta,2023,648.353
+Italy,Slovenia,2018,60.014
+Italy,Slovenia,2019,245.293
+Italy,Slovenia,2020,423.107
+Italy,Slovenia,2021,73.894
+Italy,Slovenia,2022,23.15
+Italy,Slovenia,2023,28.412
+Lithuania,Euro area – 20 countries (from 2023),2018,722.296
+Lithuania,Euro area – 20 countries (from 2023),2019,834.451
+Lithuania,Euro area – 20 countries (from 2023),2020,1382.568
+Lithuania,Euro area – 20 countries (from 2023),2021,1032.056
+Lithuania,Euro area – 20 countries (from 2023),2022,534.163
+Lithuania,Euro area – 20 countries (from 2023),2023,1100.609
+Lithuania,European Union - 27 countries (from 2020),2018,2555.52
+Lithuania,European Union - 27 countries (from 2020),2019,3397.9
+Lithuania,European Union - 27 countries (from 2020),2020,3636.308
+Lithuania,European Union - 27 countries (from 2020),2021,2967.505
+Lithuania,European Union - 27 countries (from 2020),2022,573.163
+Lithuania,European Union - 27 countries (from 2020),2023,2707.06
+Lithuania,Latvia,2018,722.296
+Lithuania,Latvia,2019,834.451
+Lithuania,Latvia,2020,1382.568
+Lithuania,Latvia,2021,1032.056
+Lithuania,Latvia,2022,534.163
+Lithuania,Latvia,2023,1100.609
+Lithuania,Poland,2018,1615.224
+Lithuania,Poland,2019,2280.449
+Lithuania,Poland,2020,2158.74
+Lithuania,Poland,2021,1684.449
+Lithuania,Poland,2023,1577.451
+Lithuania,Sweden,2018,218.0
+Lithuania,Sweden,2019,283.0
+Lithuania,Sweden,2020,95.0
+Lithuania,Sweden,2021,251.0
+Lithuania,Sweden,2022,39.0
+Lithuania,Sweden,2023,29.0
+Luxembourg,Belgium,2018,97.9
+Luxembourg,Belgium,2019,81.2
+Luxembourg,Belgium,2020,68.8
+Luxembourg,Belgium,2021,57.7
+Luxembourg,Belgium,2022,109.0
+Luxembourg,Belgium,2023,39.1
+Luxembourg,Euro area – 20 countries (from 2023),2018,97.9
+Luxembourg,Euro area – 20 countries (from 2023),2019,81.2
+Luxembourg,Euro area – 20 countries (from 2023),2020,68.8
+Luxembourg,Euro area – 20 countries (from 2023),2021,57.707
+Luxembourg,Euro area – 20 countries (from 2023),2022,109.0
+Luxembourg,Euro area – 20 countries (from 2023),2023,39.1
+Luxembourg,European Union - 27 countries (from 2020),2018,97.9
+Luxembourg,European Union - 27 countries (from 2020),2019,81.2
+Luxembourg,European Union - 27 countries (from 2020),2020,68.8
+Luxembourg,European Union - 27 countries (from 2020),2021,57.707
+Luxembourg,European Union - 27 countries (from 2020),2022,109.0
+Luxembourg,European Union - 27 countries (from 2020),2023,39.1
+Luxembourg,France,2021,0.007
+Latvia,Euro area – 20 countries (from 2023),2018,4289.8
+Latvia,Euro area – 20 countries (from 2023),2019,4029.7
+Latvia,Euro area – 20 countries (from 2023),2020,2807.4
+Latvia,Euro area – 20 countries (from 2023),2021,3089.119
+Latvia,Euro area – 20 countries (from 2023),2022,3001.29
+Latvia,Euro area – 20 countries (from 2023),2023,3370.494
+Latvia,Estonia,2018,72.0
+Latvia,Estonia,2019,691.0
+Latvia,Estonia,2020,451.0
+Latvia,Estonia,2021,407.019
+Latvia,Estonia,2022,159.39
+Latvia,Estonia,2023,351.894
+Latvia,European Union - 27 countries (from 2020),2018,4289.8
+Latvia,European Union - 27 countries (from 2020),2019,4029.7
+Latvia,European Union - 27 countries (from 2020),2020,2807.4
+Latvia,European Union - 27 countries (from 2020),2021,3089.119
+Latvia,European Union - 27 countries (from 2020),2022,3001.29
+Latvia,European Union - 27 countries (from 2020),2023,3370.494
+Latvia,Lithuania,2018,4217.8
+Latvia,Lithuania,2019,3338.7
+Latvia,Lithuania,2020,2356.4
+Latvia,Lithuania,2021,2682.1
+Latvia,Lithuania,2022,2841.9
+Latvia,Lithuania,2023,3018.6
+Malta,Euro area – 20 countries (from 2023),2018,10.758
+Malta,Euro area – 20 countries (from 2023),2019,19.511
+Malta,Euro area – 20 countries (from 2023),2020,2.868
+Malta,Euro area – 20 countries (from 2023),2021,33.597
+Malta,Euro area – 20 countries (from 2023),2022,6.029
+Malta,Euro area – 20 countries (from 2023),2023,26.226
+Malta,European Union - 27 countries (from 2020),2018,10.758
+Malta,European Union - 27 countries (from 2020),2019,19.511
+Malta,European Union - 27 countries (from 2020),2020,2.868
+Malta,European Union - 27 countries (from 2020),2021,33.597
+Malta,European Union - 27 countries (from 2020),2022,6.029
+Malta,European Union - 27 countries (from 2020),2023,26.226
+Malta,Italy,2018,10.758
+Malta,Italy,2019,19.511
+Malta,Italy,2020,2.868
+Malta,Italy,2021,33.597
+Malta,Italy,2022,6.029
+Malta,Italy,2023,26.226
+Netherlands,Belgium,2018,10781.4
+Netherlands,Belgium,2019,5913.6
+Netherlands,Belgium,2020,7804.6
+Netherlands,Belgium,2021,7319.1
+Netherlands,Belgium,2022,8508.8
+Netherlands,Belgium,2023,8396.7
+Netherlands,Germany,2018,735.0
+Netherlands,Germany,2019,5046.0
+Netherlands,Germany,2020,8677.0
+Netherlands,Germany,2021,7641.0
+Netherlands,Germany,2022,8910.0
+Netherlands,Germany,2023,10041.0
+Netherlands,Denmark,2019,655.0
+Netherlands,Denmark,2020,1029.278
+Netherlands,Denmark,2021,855.702
+Netherlands,Denmark,2022,1251.644
+Netherlands,Denmark,2023,1699.714
+Netherlands,Euro area – 20 countries (from 2023),2018,11516.4
+Netherlands,Euro area – 20 countries (from 2023),2019,10959.6
+Netherlands,Euro area – 20 countries (from 2023),2020,16481.6
+Netherlands,Euro area – 20 countries (from 2023),2021,14960.1
+Netherlands,Euro area – 20 countries (from 2023),2022,17418.8
+Netherlands,Euro area – 20 countries (from 2023),2023,18437.7
+Netherlands,European Union - 27 countries (from 2020),2018,11516.4
+Netherlands,European Union - 27 countries (from 2020),2019,11614.6
+Netherlands,European Union - 27 countries (from 2020),2020,17510.878
+Netherlands,European Union - 27 countries (from 2020),2021,15815.802
+Netherlands,European Union - 27 countries (from 2020),2022,18670.444
+Netherlands,European Union - 27 countries (from 2020),2023,20137.414
+Netherlands,Norway,2018,322.654
+Netherlands,Norway,2019,1415.0
+Netherlands,Norway,2020,105.858
+Netherlands,Norway,2021,351.223
+Netherlands,Norway,2022,403.46
+Netherlands,Norway,2023,644.724
+Netherlands,United Kingdom,2018,6391.886
+Netherlands,United Kingdom,2019,6049.424
+Poland,Czechia,2018,3771.248
+Poland,Czechia,2019,3407.536
+Poland,Czechia,2020,3649.712
+Poland,Czechia,2021,8420.788
+Poland,Czechia,2022,9544.285
+Poland,Czechia,2023,5411.822
+Poland,Germany,2018,21.0
+Poland,Germany,2019,20.0
+Poland,Germany,2020,12.0
+Poland,Germany,2021,326.0
+Poland,Germany,2022,306.0
+Poland,Germany,2023,704.0
+Poland,Euro area – 20 countries (from 2023),2018,3974.3
+Poland,Euro area – 20 countries (from 2023),2019,3649.7
+Poland,Euro area – 20 countries (from 2023),2020,3547.7
+Poland,Euro area – 20 countries (from 2023),2021,5648.5
+Poland,Euro area – 20 countries (from 2023),2022,7257.4
+Poland,Euro area – 20 countries (from 2023),2023,5328.4
+Poland,European Union - 27 countries (from 2020),2018,8120.548
+Poland,European Union - 27 countries (from 2020),2019,7245.236
+Poland,European Union - 27 countries (from 2020),2020,7209.412
+Poland,European Union - 27 countries (from 2020),2021,14278.288
+Poland,European Union - 27 countries (from 2020),2022,16911.685
+Poland,European Union - 27 countries (from 2020),2023,10993.222
+Poland,Lithuania,2018,717.3
+Poland,Lithuania,2019,384.7
+Poland,Lithuania,2020,380.7
+Poland,Lithuania,2021,695.5
+Poland,Lithuania,2022,942.4
+Poland,Lithuania,2023,997.4
+Poland,Sweden,2018,375.0
+Poland,Sweden,2019,188.0
+Poland,Sweden,2020,12.0
+Poland,Sweden,2021,209.0
+Poland,Sweden,2022,110.0
+Poland,Sweden,2023,253.0
+Poland,Slovakia,2018,3236.0
+Poland,Slovakia,2019,3245.0
+Poland,Slovakia,2020,3155.0
+Poland,Slovakia,2021,4627.0
+Poland,Slovakia,2022,6009.0
+Poland,Slovakia,2023,3627.0
+Portugal,Euro area – 20 countries (from 2023),2018,8324.0
+Portugal,Euro area – 20 countries (from 2023),2019,4699.958
+Portugal,Euro area – 20 countries (from 2023),2020,6096.881
+Portugal,Euro area – 20 countries (from 2023),2021,4791.774
+Portugal,Euro area – 20 countries (from 2023),2022,3059.62
+Portugal,Euro area – 20 countries (from 2023),2023,3424.726
+Portugal,Spain,2018,8324.0
+Portugal,Spain,2019,4699.958
+Portugal,Spain,2020,6096.881
+Portugal,Spain,2021,4791.774
+Portugal,Spain,2022,3059.62
+Portugal,Spain,2023,3424.726
+Portugal,European Union - 27 countries (from 2020),2018,8324.0
+Portugal,European Union - 27 countries (from 2020),2019,4699.958
+Portugal,European Union - 27 countries (from 2020),2020,6096.881
+Portugal,European Union - 27 countries (from 2020),2021,4791.774
+Portugal,European Union - 27 countries (from 2020),2022,3059.62
+Portugal,European Union - 27 countries (from 2020),2023,3424.726
+Romania,Bulgaria,2018,2083.11
+Romania,Bulgaria,2019,2733.203
+Romania,Bulgaria,2020,3117.376
+Romania,Bulgaria,2021,1485.927
+Romania,Bulgaria,2022,1184.546
+Romania,Bulgaria,2023,3524.99
+Romania,European Union - 27 countries (from 2020),2018,3125.11
+Romania,European Union - 27 countries (from 2020),2019,2960.203
+Romania,European Union - 27 countries (from 2020),2020,3288.376
+Romania,European Union - 27 countries (from 2020),2021,2013.927
+Romania,European Union - 27 countries (from 2020),2022,1613.546
+Romania,European Union - 27 countries (from 2020),2023,4180.99
+Romania,Hungary,2018,1042.0
+Romania,Hungary,2019,227.0
+Romania,Hungary,2020,171.0
+Romania,Hungary,2021,528.0
+Romania,Hungary,2022,429.0
+Romania,Hungary,2023,656.0
+Romania,Moldova,2022,481.0
+Romania,Moldova,2023,310.9
+Romania,Serbia,2018,1797.113
+Romania,Serbia,2019,1005.727
+Romania,Serbia,2020,629.294
+Romania,Serbia,2021,1382.868
+Romania,Serbia,2022,1966.363
+Romania,Ukraine,2020,103.1
+Sweden,Denmark,2018,4750.092
+Sweden,Denmark,2019,5355.904
+Sweden,Denmark,2020,5998.761
+Sweden,Denmark,2021,6979.529
+Sweden,Denmark,2022,9260.984
+Sweden,Denmark,2023,9451.16
+Sweden,Euro area – 20 countries (from 2023),2018,16533.1
+Sweden,Euro area – 20 countries (from 2023),2019,19397.2
+Sweden,Euro area – 20 countries (from 2023),2020,23055.8
+Sweden,Euro area – 20 countries (from 2023),2021,18459.9
+Sweden,Euro area – 20 countries (from 2023),2022,20153.8
+Sweden,Euro area – 20 countries (from 2023),2023,13914.0
+Sweden,European Union - 27 countries (from 2020),2018,24381.579
+Sweden,European Union - 27 countries (from 2020),2019,27830.286
+Sweden,European Union - 27 countries (from 2020),2020,32843.48
+Sweden,European Union - 27 countries (from 2020),2021,28871.815
+Sweden,European Union - 27 countries (from 2020),2022,29414.784
+Sweden,European Union - 27 countries (from 2020),2023,27353.84
+Sweden,Finland,2018,13658.0
+Sweden,Finland,2019,15824.0
+Sweden,Finland,2020,18466.0
+Sweden,Finland,2021,15013.0
+Sweden,Finland,2022,15296.0
+Sweden,Finland,2023,9220.0
+Sweden,Lithuania,2018,2875.1
+Sweden,Lithuania,2019,3573.2
+Sweden,Lithuania,2020,4589.8
+Sweden,Lithuania,2021,3446.9
+Sweden,Lithuania,2022,4857.8
+Sweden,Lithuania,2023,4694.0
+Sweden,Norway,2018,5297.482
+Sweden,Norway,2019,7480.0
+Sweden,Norway,2020,3468.007
+Sweden,Norway,2021,5019.831
+Sweden,Norway,2022,6618.481
+Sweden,Norway,2023,7944.608
+Sweden,Poland,2018,3098.387
+Sweden,Poland,2019,3077.182
+Sweden,Poland,2020,3788.919
+Sweden,Poland,2021,3432.386
+Sweden,Poland,2023,3988.68
+Slovenia,Austria,2018,398.032
+Slovenia,Austria,2019,167.332
+Slovenia,Austria,2020,211.406
+Slovenia,Austria,2021,709.302
+Slovenia,Austria,2022,501.421
+Slovenia,Austria,2023,1177.285
+Slovenia,Euro area – 20 countries (from 2023),2018,9317.227
+Slovenia,Euro area – 20 countries (from 2023),2019,9340.15
+Slovenia,Euro area – 20 countries (from 2023),2020,9123.386
+Slovenia,Euro area – 20 countries (from 2023),2021,8657.902
+Slovenia,Euro area – 20 countries (from 2023),2022,8733.996
+Slovenia,Euro area – 20 countries (from 2023),2023,10384.854
+Slovenia,European Union - 27 countries (from 2020),2018,9317.227
+Slovenia,European Union - 27 countries (from 2020),2019,9340.15
+Slovenia,European Union - 27 countries (from 2020),2020,9123.386
+Slovenia,European Union - 27 countries (from 2020),2021,8657.902
+Slovenia,European Union - 27 countries (from 2020),2022,8752.996
+Slovenia,European Union - 27 countries (from 2020),2023,10619.854
+Slovenia,Croatia,2018,2180.5
+Slovenia,Croatia,2019,3979.2
+Slovenia,Croatia,2020,5002.8
+Slovenia,Croatia,2021,2499.0
+Slovenia,Croatia,2022,2019.0
+Slovenia,Croatia,2023,2694.3
+Slovenia,Hungary,2022,19.0
+Slovenia,Hungary,2023,235.0
+Slovenia,Italy,2018,6738.695
+Slovenia,Italy,2019,5193.618
+Slovenia,Italy,2020,3909.18
+Slovenia,Italy,2021,5449.6
+Slovenia,Italy,2022,6213.575
+Slovenia,Italy,2023,6513.269
+Slovenia,Montenegro,2018,140.5
+Slovakia,Czechia,2018,108.851
+Slovakia,Czechia,2019,121.7
+Slovakia,Czechia,2020,262.006
+Slovakia,Czechia,2021,314.045
+Slovakia,Czechia,2022,71.341
+Slovakia,Czechia,2023,1221.519
+Slovakia,European Union - 27 countries (from 2020),2018,6949.843
+Slovakia,European Union - 27 countries (from 2020),2019,8886.498
+Slovakia,European Union - 27 countries (from 2020),2020,9605.558
+Slovakia,European Union - 27 countries (from 2020),2021,11114.718
+Slovakia,European Union - 27 countries (from 2020),2022,13240.341
+Slovakia,European Union - 27 countries (from 2020),2023,12453.221
+Slovakia,Hungary,2018,6813.0
+Slovakia,Hungary,2019,8738.0
+Slovakia,Hungary,2020,9251.0
+Slovakia,Hungary,2021,10723.0
+Slovakia,Hungary,2022,13169.0
+Slovakia,Hungary,2023,10972.0
+Slovakia,Poland,2018,27.992
+Slovakia,Poland,2019,26.798
+Slovakia,Poland,2020,92.552
+Slovakia,Poland,2021,77.673
+Slovakia,Poland,2023,259.702
+Slovakia,Ukraine,2019,737.2
+Slovakia,Ukraine,2020,1524.7
