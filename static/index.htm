@@ -191,8 +191,8 @@
 
                                             return `M ${coords1[0]} ${coords1[1]} Q ${curvePoint[0]} ${curvePoint[1]} ${coords2[0]} ${coords2[1]}`
                                       })
-                                      .attr("from", d.partner)
-                                      .attr("to", d.geo)
+                                      .attr("from", d => d.partner)
+                                      .attr("to", d => d.geo)
                                       .style("fill", "none")
                                       .style("stroke", "black")
                                       .style("stroke-width", "1px")
