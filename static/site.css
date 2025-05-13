@@ -71,3 +71,18 @@ p {
 .tick line {
     stroke: 'red'
 }
+
+.gridlines line {
+  stroke: #bbb;
+}
+
+.gridlines .domain {
+  stroke: none;
+}
+
+#GermanEnergy {
+    z-index: 5;
+    top: 50%;
+    position: fixed;
+    opacity: 1;
+}

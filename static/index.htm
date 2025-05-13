@@ -61,6 +61,9 @@
         <div id="vis">
             <svg id="svg" width="1000" height="1000"></svg>
         </div>
+        <div id="GermanEnergy">
+            <svg id="svg-line" width="600" height="500"></svg>
+        </div>
     </div>
 
     <script>
@@ -235,9 +238,124 @@
                 //
                 // TODO
                 // CONTINUE INITIALIZIZING EVERYTHING WE NEED TO DRAW HERE
+
+                // German energy production 
+                const bargraph_g = d3.select('#svg-line')
+                const width = bargraph_g.attr("width");
+                const height = bargraph_g.attr("height");
+                const margin = {top: 10, right: 10, bottom: 50, left: 50};
+                const chartWidth = width - margin.left - margin.right;
+                const chartHeight = height - margin.top - margin.bottom;
+
+                let annotations = bargraph_g.append("g").attr("id","annotations");
+                    // No translate here since our annotations may be outside of the chart area
+                let chartArea = bargraph_g.append("g").attr("id","points")
+                    .attr("transform","translate("+margin.left+","+margin.top+")");
+
+                const loadScatter = async function() {
+
+                    let dataset = await d3.csv("data/germany_energy.csv", d3.autoType )
+                    console.log(dataset);
+                    // Reformat data 
+                    const longData = [];
+                        dataset.forEach(row => {
+                        const type = row.Type;
+                        if (type === "Consumption" || type === "Exports" || type === "Imports") return;
+                        Object.keys(row).forEach(key => {
+                            if (key !== "Type" ) {
+                                longData.push({
+                                    type: type,
+                                    year: +key,
+                                    value: +row[key]
+                                });
+                            }
+                        });
+                        });
+                    console.log(longData);
+
+                    const yearExtent = d3.extent(longData, d => d.year);
+                    const yearScale = d3.scaleLinear().domain(yearExtent).range([0, chartWidth]);
+
+                    const valueExtent = d3.extent(longData, d => d.value);
+                    const valueScale = d3.scaleLinear().domain(valueExtent).range([chartHeight, 0]);
+                    // console.log(yearExtent);
+                    // console.log(valueExtent);
+                    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+                    const leftAxis = d3.axisLeft(valueScale)
+                                    .tickFormat(d3.format(".2s"));
+
+                    const bottomAxis = d3.axisBottom(yearScale)
+                                        .tickFormat(d3.format("~f"));
+                    // Append axes
+                    annotations.append("g")
+                    .attr("class", "y axis")
+                    .attr("transform", `translate(${margin.left - 10},${margin.top})`)
+                    .call(leftAxis);
+
+                    annotations.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", `translate(${margin.left},${chartHeight + margin.top + 10})`)
+                    .call(bottomAxis);
+
+                    const line = d3.line()
+                        .x(d => yearScale(d.year))
+                        .y(d => valueScale(d.value));
+
+                    // Group data by type
+                    const dataByType = d3.group(longData, d => d.type);
+
+                    // Plot lines
+                    chartArea.selectAll(".line")
+                        .data(dataByType)
+                        .join("path")
+                        .attr("class", "line")
+                        .attr("d", ([type, values]) => line(values))
+                        // .attr("d", ([type, values]) => (type !== "Exports" && type !== "Imports" && type !== "Consumption") ? line(values) : null)
+                        .attr("fill", "none")
+                        .attr("stroke", ([type]) => colorScale(type))
+                        .attr("stroke-width", 2);
+                    for (let [type, values] of dataByType) {
+                        if (type !== "Exports" && type !== "Imports" && type !== "Consumption") {
+                            d3.select('#svg-line').append("g")
+                                .selectAll("circle")
+                                .data(values)
+                                .join("circle")
+                                .attr("class", "line")
+                                .attr("cx", d => yearScale(d.year) + margin.left)
+                                .attr("cy", d => valueScale(d.value) + margin.top)
+                                .attr("r", 3)
+                                .attr("fill", colorScale(type));
+                            }
+                        }
+                    const legendGroup = svg.append("g")
+                        .attr("class", "legend-group")
+                        .attr("transform", `translate(${margin.left * 2}, ${height - margin.bottom + .5*height})`)
+                        .attr("opacity", 1); // OPACITY
+
+                    const legend = legendGroup.selectAll(".legend")
+                        .data(dataByType.keys())
+                        .join("g")
+                        .attr("class", "legend")
+                        .attr("transform", (d, i) => `translate(0,${i * 20})`);
+
+                    legend.append("rect")
+                        .attr("x", 0)
+                        .attr("width", 10)
+                        .attr("height", 10)
+                        .attr("fill", d => colorScale(d));
+
+                    legend.append("text")
+                        .attr("x", 15)
+                        .attr("y", 9)
+                        .text(d => d);
+
+
+                }
+                loadScatter();
+
+
                 //
-                
-                // German energy production
 
                 // Draw a line representing the start of Russo Ukranian
 
@@ -341,6 +459,9 @@
                 // German energy production
                 function draw2() {
                     clean("someOtherChart");
+                    // keep opcaity of map
+                    // zoom into map
+                    // show the line graph
                 }
 
                 // Draw a line representing the start of Russo Ukranian
@@ -394,6 +515,10 @@
                               .attr("stroke-dashoffset", pathLength);
                         })
                     }
+
+                    // if (chartType !== "germanEnergy") {
+                    //     svg.selectAll("path.trade-link").transition().duration(0).style("opacity", 0);
+                    // }
 
                     // If we're NOT looking at the tradelinks viz OR the initial map
                     if (!["tradeLinks", "plainMap"].includes(chartType)) {
