@@ -1,4 +1,4 @@
-# Rainy Seattle
+# Energy in Europe
 
 ## Overview
 
@@ -12,5 +12,3 @@ When we scroll after the initial line chart, make a vertical line on the date of
 Shift focus to Russia / Ukraine; Highlight its huge oil/natural gas;
 
 Play with yourself
-
-## TODO:
