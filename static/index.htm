@@ -632,10 +632,46 @@
                 // zoom rest identity
                 zoomOutToWorld(zoomOutDuration)
                 // show the line graph
-                d3.select("#svg-line").transition().duration(500).style("opacity", 1);
+                d3.select("#svg-line-2").transition().duration(appearDuration).style("opacity", 1);
+
+                d3.selectAll("path.russia-line").each(function(d, i) {
+                    const pathLength = this.getTotalLength();
+
+                    d3.select(this)
+                        .transition()
+                        // d3.ease documentation:
+                        // https://d3js.org/d3-ease
+                        .ease(d3.easeLinear)
+                        .attr("stroke-dashoffset", 0)
+                        .style("opacity", 1)
+                        .duration(germanLineDuration);
+                });
+
+                maxSum = 0;
+                reversedCircles["russia"].each(function(d) {
+                    let d3Object = d3.select(this);
+                    let circleSum = parseInt(d3Object.attr("sum"));
+
+                    if (maxSum < 1) {
+                        maxSum = circleSum;
+                    }
+
+                    let circleDelay = Math.round(circleSum / maxSum * germanLineDuration);
+
+                    d3Object.transition()
+                            .delay(circleDelay)
+                            .ease(d3.easeBackOut)
+                            .attr("r", 4)
+                            .duration(circleDuration);
+
+                    if (circleSum < 1) {
+                        maxSum = circleSum;
+                    }
+                });
+
                 d3.select('.legend-group').transition().duration(500).style("opacity", 1);
-                d3.selectAll(".x.axis").transition().duration(500).style("opacity", 1);
-                d3.selectAll(".y.axis").transition().duration(500).style("opacity", 1);
+                d3.selectAll("#svg-line-2 .x.axis").transition().duration(500).style("opacity", 1);
+                d3.selectAll("#svg-line-2 .y.axis").transition().duration(500).style("opacity", 1);
             }
 
             // Russian and Ukranian energy production
@@ -688,25 +724,42 @@
                             .style("opacity", 0)
                             .attr("stroke-dashoffset", pathLength);
                     })
-
+                    
                     // Interrupt every timeout in the dict
                     for (const key in tradeLinkTimeouts) {
                         clearTimeout(tradeLinkTimeouts[key]);
                     }
                 }
-
-                if (chartType !== "germanEnergy" || chartType !== "RussiaInvades") {
+                
+                if (chartType !== "germanEnergy" ) {
                     // d3.select("#svg-line").style("opacity", 0);
-                d3.select("#svg-line").transition().duration(disappearDuration).style("opacity", 0);
-                d3.selectAll("path.germany-line").each(function(d) {
-                    const pathLength = this.getTotalLength();
-                    d3.select(this)
+                    d3.select("#svg-line").transition().duration(disappearDuration).style("opacity", 0);
+                    d3.selectAll("path.germany-line").each(function(d) {
+                        const pathLength = this.getTotalLength();
+                        d3.select(this)
                         .interrupt()
                         .transition()
                         .duration(disappearDuration / 2)
                         .style("opacity", 0)
                         .attr("stroke-dashoffset", pathLength);
-                });
+                    })}
+                    
+                if (chartType !== "RussiaInvades") {
+                    // d3.select("#svg-line").style("opacity", 0);
+                    d3.select("#svg-line-2").transition().duration(disappearDuration).style("opacity", 0);
+                    d3.selectAll("path.russia-line").each(function(d) {
+                        const pathLength = this.getTotalLength();
+                        d3.select(this)
+                            .interrupt()
+                            .transition()
+                            .duration(disappearDuration / 2)
+                            .style("opacity", 0)
+                            .attr("stroke-dashoffset", pathLength);
+
+                    d3.selectAll("#svg-line-2 .x.axis").transition().duration(500).style("opacity", 1);
+                    d3.selectAll("#svg-line-2 .y.axis").transition().duration(500).style("opacity", 1);
+                })}
+                
 
                 maxSum = 0;
                 reversedCircles["germany"].each(function(d) {
@@ -741,7 +794,6 @@
                     .style("opacity", 0.4)
                     .style("stroke", "white")
                     .style("stroke-width", 1)
-                }
 
                 // If we're NOT looking at the tradelinks viz OR the initial map
                 if (!["tradeLinks", "plainMap"].includes(chartType)) {

@@ -86,3 +86,9 @@ p {
     position: fixed;
     opacity: 1;
 }
+#RussianEnergy {
+    z-index: 5;
+    top: 50%;
+    position: fixed;
+    opacity: 1;
+}
