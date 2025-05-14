@@ -81,8 +81,5 @@ p {
 }
 
 #GermanEnergy {
-    z-index: 5;
-    top: 50%;
-    position: fixed;
-    opacity: 1;
+    z-index: 2;
 }
