@@ -61,7 +61,7 @@ const margins = {left: 170, top: 50, bottom: 50, right: 20}
 coords = await d3.csv("data/country-coord.csv");
 // Find Germany, which is the center of our map
 const germany = coords.find((country) => country.Country == "Germany");
-const germanyCoords = [germany["Longitude (average)"], germany["Latitude (average)"]]
+const germanyCoords = [germany["Longitude (average)"] + 100, germany["Latitude (average)"]]
 
 // Creating the map
     // List of country names with IDs
@@ -93,7 +93,7 @@ const europeFeatures = geoData.features.filter(f => {
 // https://d3js.org/d3-geo/projection
 const projection = d3.geoConicConformal()
                 .center(germanyCoords)
-                .scale(width * 1.2)
+                .scale(width * 1.4)
                 .translate([width / 2, height / 2]);
 const path = d3.geoPath().projection(projection);
 
