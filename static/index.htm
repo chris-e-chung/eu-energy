@@ -253,29 +253,23 @@
                     const endCircleCoords = this.getPointAtLength(pathLength);
                     // Set the opacity to 0 so they're not visible
                     svg.append("circle")
-                       .attr("class", "trade-link-circle")
+                       .attr("class", "trade-link-circle start")
                        .attr("id", "start" + i)
                        .attr("cx", c => Math.round(startCircleCoords.x))
                        .attr("cy", c => Math.round(startCircleCoords.y))
-                       .attr("r", 1)
+                       .attr("r", 2)
                        .style("opacity", 0)
                     svg.append("circle")
-                       .attr("class", "trade-link-circle")
+                       .attr("class", "trade-link-circle end")
                        .attr("id", "end" + i)
                        .attr("cx", c => Math.round(endCircleCoords.x))
                        .attr("cy", c => Math.round(endCircleCoords.y))
-                       .attr("r", 1)
+                       .attr("r", 2)
                        .style("opacity", 0);
                 });
 
-                //
-                // TODO
-                // CONTINUE INITIALIZIZING EVERYTHING WE NEED TO DRAW HERE
-
-                // German energy production 
                 // Store every reversed DOM list we have
                 reversedCircles = {};
-
                 async function drawLineChart(svgSelector, csvPath, name) {
                     const svg = d3.select(svgSelector)
                     const width = svg.attr("width");
@@ -424,14 +418,13 @@
                 reversedCircles[name] = newCircles;
             }
                 
-            drawLineChart("#svg-line", "data/germany_energy.csv", "germany")
-            
-            // Draw a line representing the start of Russo Ukranian
+                drawLineChart("#svg-line", "data/germany_energy.csv", "germany")
+                
+                // Draw a line representing the start of Russo Ukranian
 
-            // Russian and Ukranian energy production
+                // Russian and Ukranian energy production
 
-            // Play with yourself (What?)
-
+                // Play with yourself (What?)
             }
             pageLoad();
 
@@ -442,8 +435,6 @@
                     d3.zoomIdentity 
                 );
             }
-
-
 
             // The following functions are called whenever we need to make something visible
             // They shouldn't 'add' anything to the svg - only edit visibility via opacity, radius, etc.
@@ -551,41 +542,37 @@
                     })
                 }
 
+            // German energy production
+            function draw2() {
+                clean("germanEnergy");
+                // keep opcaity of map
+                svg.selectAll("path.country")
+                        .transition()
+                        .duration(500)
+                        .style("opacity", 1)
+                // zoom into map
+                const [gx, gy] = projection(germanyCoords);
+                const zoomScale = 4;
+                const tx = width / 2 - gx * zoomScale;
+                const ty = height / 2 - gy * zoomScale;
+                
+                // Animate zoom to Germany
+                svg.transition().duration(1000).call(
+                    zoom.transform,
+                    d3.zoomIdentity
+                        .translate(tx, ty)
+                        .scale(zoomScale)
+                );
+                
+                // Outline Germany
+                svg.selectAll("path.country")
+                        .transition()
+                        .duration(500)
+                        .style("opacity", d => d.properties.name === "Germany" ? 1 : 0.4)
+                        // .style("stroke", d => d.properties.name === "Germany" ? "black" : "white")
+                        // .style("stroke-width", d => d.properties.name === "Germany" ? 2 : 1);
 
-                // TODO
-                // Add functionality to the drawing functions for the viz's
-            
-                // German energy production
-                function draw2() {
-                    clean("germanEnergy");
-                    // keep opcaity of map
-                    svg.selectAll("path.country")
-                           .transition()
-                           .duration(500)
-                           .style("opacity", 1)
-                    // zoom into map
-                    const [gx, gy] = projection(germanyCoords);
-                    const zoomScale = 4;
-                    const tx = width / 2 - gx * zoomScale;
-                    const ty = height / 2 - gy * zoomScale;
-                    
-                    // Animate zoom to Germany
-                    svg.transition().duration(1000).call(
-                        zoom.transform,
-                        d3.zoomIdentity
-                            .translate(tx, ty)
-                            .scale(zoomScale)
-                    );
-                    
-                    // Outline Germany
-                    svg.selectAll("path.country")
-                            .transition()
-                            .duration(500)
-                            .style("opacity", d => d.properties.name === "Germany" ? 1 : 0.4)
-                            // .style("stroke", d => d.properties.name === "Germany" ? "black" : "white")
-                            // .style("stroke-width", d => d.properties.name === "Germany" ? 2 : 1);
-
-                    // show the line graph
+                // show the line graph
 
                 d3.select("#svg-line").transition().duration(appearDuration).style("opacity", 1);
 
@@ -629,24 +616,24 @@
                 d3.selectAll(".y.axis").transition().duration(500).style("opacity", 1);
             }
 
-                // Draw a line representing the start of Russo Ukranian
-                function draw3() {
-                    clean("RussiaInvades");
-                    // keep opcaity of map
-                    svg.selectAll("path.country")
-                            .transition()
-                            .duration(500)
-                            .style("opacity", d => d.properties.name === "Germany" || d.properties.name === "Russia" ? 1 : 0.4)
-                            // .style("stroke", d => d.properties.name === "Germany" ? "black" : "white")
-                            // .style("stroke-width", d => d.properties.name === "Germany" ? 2 : 1);
-                    // zoom rest identity
-                    zoomOutToWorld(zoomOutDuration)
-                    // show the line graph
-                    d3.select("#svg-line").transition().duration(500).style("opacity", 1);
-                    d3.select('.legend-group').transition().duration(500).style("opacity", 1);
-                    d3.selectAll(".x.axis").transition().duration(500).style("opacity", 1);
-                    d3.selectAll(".y.axis").transition().duration(500).style("opacity", 1);
-                }
+            // Draw a line representing the start of Russo Ukranian
+            function draw3() {
+                clean("RussiaInvades");
+                // keep opcaity of map
+                svg.selectAll("path.country")
+                        .transition()
+                        .duration(500)
+                        .style("opacity", d => d.properties.name === "Germany" || d.properties.name === "Russia" ? 1 : 0.4)
+                        // .style("stroke", d => d.properties.name === "Germany" ? "black" : "white")
+                        // .style("stroke-width", d => d.properties.name === "Germany" ? 2 : 1);
+                // zoom rest identity
+                zoomOutToWorld(zoomOutDuration)
+                // show the line graph
+                d3.select("#svg-line").transition().duration(500).style("opacity", 1);
+                d3.select('.legend-group').transition().duration(500).style("opacity", 1);
+                d3.selectAll(".x.axis").transition().duration(500).style("opacity", 1);
+                d3.selectAll(".y.axis").transition().duration(500).style("opacity", 1);
+            }
 
             // Russian and Ukranian energy production
             function draw4() {
@@ -678,9 +665,14 @@
                 if (chartType !== "tradeLinks") {
                     tradeLinkActive = false;
 
-                    svg.selectAll("circle.trade-link-circle")
+                    svg.selectAll("circle.start")
                         .transition()
-                        .duration(0)
+                        .duration(disappearDuration)
+                        .style("opacity", 0);
+
+                    svg.selectAll("circle.end")
+                        .transition()
+                        .duration(disappearDuration / 3)
                         .style("opacity", 0);
 
                     // Then, interrupt every current transition and set visibility to 0
