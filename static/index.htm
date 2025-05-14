@@ -87,11 +87,23 @@
                 // Load the TopoJSON
             const worldjson = await d3.json("https://unpkg.com/world-atlas@1.1.4/world/50m.json");
             const geoData = topojson.feature(worldjson, worldjson.objects.countries);
-                // Add the correct name to each country's properties
+            
+            // Add the correct name to each country's properties
             geoData.features.forEach((d, i) => {
                 const id = worldjson.objects.countries.geometries[i].id;
                 d.id = id;
                 d.properties.name = nameById.get(id);  // Now this will not be undefined
+            });
+
+            const europeFeatures = geoData.features.filter(f => {
+                const bounds = d3.geoBounds(f);  // returns [[west, south], [east, north]]
+                const [[minLon, minLat], [maxLon, maxLat]] = bounds;
+
+                    // Rough Europe bounding box (adjust if needed):
+                    return (
+                        (maxLon >= -10 || maxLon <= -160) &&
+                        maxLat >= 30 && minLat <= 100       // Latitude range for Europe
+                    );
             });
             
             // Zoom Behavior
@@ -112,7 +124,7 @@
             const path = d3.geoPath().projection(projection);
 
             // Add the paths to the svg
-            map = svg.append("g").selectAll("path.country").data(geoData.features)
+            map = svg.append("g").selectAll("path.country").data(europeFeatures)
                 .join("path")
                 .attr("d", path)
                 .attr("class", "country")
@@ -136,8 +148,6 @@
             countrySurfaceAreaData.forEach(d => {
                 countrySurfaceArea[d["Country Name"]] = d["2022"];
             });
-
-            const germanyData = await d3.csv("data/germany_energy.csv", d3.autoType );
 
             // Draw everything first, but set their visibility to hidden to hide them and show as needed l8r
             // Setting their visibility to hidden doesn't necessarily mean "display: none"
@@ -263,144 +273,158 @@
                 // CONTINUE INITIALIZIZING EVERYTHING WE NEED TO DRAW HERE
 
                 // German energy production 
-                const bargraph_g = d3.select('#svg-line')
-                const width = bargraph_g.attr("width");
-                const height = bargraph_g.attr("height");
-                const margin = {top: 10, right: 10, bottom: 50, left: 50};
-                const chartWidth = width - margin.left - margin.right;
-                const chartHeight = height - margin.top - margin.bottom;
+                // Store every reversed DOM list we have
+                reversedCircles = {};
 
-                let annotations = bargraph_g.append("g").attr("id","annotations");
-                    // No translate here since our annotations may be outside of the chart area
-                let chartArea = bargraph_g.append("g").attr("id","points")
-                    .attr("transform","translate("+margin.left+","+margin.top+")");
+                async function drawLineChart(svgSelector, csvPath, name) {
+                    const svg = d3.select(svgSelector)
+                    const width = svg.attr("width");
+                    const height = svg.attr("height");
+                    const margin = {top: 10, right: 10, bottom: 50, left: 50};
+                    const chartWidth = width - margin.left - margin.right;
+                    const chartHeight = height - margin.top - margin.bottom;
 
-                // Reformat data 
-                const longData = [];
-                    germanyData.forEach(row => {
-                    const type = row.Type;
-                    if (type === "Consumption" || type === "Exports" || type === "Imports") return;
-                    Object.keys(row).forEach(key => {
-                        if (key !== "Type" ) {
-                            longData.push({
-                                type: type,
-                                year: +key,
-                                value: +row[key]
-                            });
-                        }
+                    let annotations = svg.append("g").attr("id","annotations");
+                        // No translate here since our annotations may be outside of the chart area
+                    let chartArea = svg.append("g").attr("id","points")
+                        .attr("transform","translate("+margin.left+","+margin.top+")");
+
+                    // Reformat data 
+                    let dataset = await d3.csv(csvPath, d3.autoType);
+                    const longData = [];
+                    dataset.forEach(row => {
+                        const type = row.Type;
+                        if (type === "Consumption" || type === "Exports" || type === "Imports") return;
+                        Object.keys(row).forEach(key => {
+                            if (key !== "Type") {
+                                const year = +key;
+                                const value = +row[key];
+                                if (!isNaN(year) && !isNaN(value)) {
+                                    longData.push({ type, year, value });
+                                }
+                            }
+                        });
                     });
-                    });
 
-                const yearExtent = d3.extent(longData, d => d.year);
-                const yearScale = d3.scaleLinear().domain(yearExtent).range([0, chartWidth]);
+                    const yearExtent = d3.extent(longData, d => d.year);
+                    const yearScale = d3.scaleLinear().domain(yearExtent).range([0, chartWidth]);
 
-                const valueExtent = d3.extent(longData, d => d.value);
-                const valueScale = d3.scaleLinear().domain(valueExtent).range([chartHeight, 0]);
+                    const valueExtent = d3.extent(longData, d => d.value);
+                    const valueScale = d3.scaleLinear().domain(valueExtent).range([chartHeight, 0]);
 
-                const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+                    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
-                const leftAxis = d3.axisLeft(valueScale)
-                                .tickFormat(d3.format(".2s"));
+                    const leftAxis = d3.axisLeft(valueScale)
+                                    .tickFormat(d3.format(".2s"));
 
-                const bottomAxis = d3.axisBottom(yearScale)
-                                    .tickFormat(d3.format("~f"));
-                // Append axes
-                annotations.append("g")
-                .attr("class", "y axis")
-                .attr("transform", `translate(${margin.left - 10},${margin.top})`)
-                .call(leftAxis)
-                .style("opacity", 0);
+                    const bottomAxis = d3.axisBottom(yearScale)
+                                        .tickFormat(d3.format("~f"));
 
-                annotations.append("g")
-                .attr("class", "x axis")
-                .attr("transform", `translate(${margin.left},${chartHeight + margin.top + 10})`)
-                .call(bottomAxis)
-                .style("opacity", 0);
+                    // Append axes
+                    annotations.append("g")
+                        .attr("class", "y axis")
+                        .attr("transform", `translate(${margin.left - 10},${margin.top})`)
+                        .call(leftAxis)
+                        .style("opacity", 0);
 
-                const line = d3.line()
-                    .x(d => yearScale(d.year))
-                    .y(d => valueScale(d.value));
+                    annotations.append("g")
+                        .attr("class", "x axis")
+                        .attr("transform", `translate(${margin.left},${chartHeight + margin.top + 10})`)
+                        .call(bottomAxis)
+                        .style("opacity", 0);
 
-                // Group data by type
-                const dataByType = d3.group(longData, d => d.type);
+                    const line = d3.line()
+                        .defined(d => !isNaN(d.value) && !isNaN(d.year))
+                        .x(d => yearScale(d.year))
+                        .y(d => valueScale(d.value));
 
-                // Plot lines
-                germanyEnergyLines = chartArea.selectAll("path.germany-line")
-                    .data(dataByType)
-                    .join("path")
-                    .attr("class", "germany-line")
-                    .attr("d", ([type, values]) => line(values))
-                    // .attr("d", ([type, values]) => (type !== "Exports" && type !== "Imports" && type !== "Consumption") ? line(values) : null)
-                    .attr("fill", "none")
-                    .attr("stroke", ([type]) => colorScale(type))
-                    .attr("stroke-width", 2);
+                    // Group data by type
+                    const dataByType = d3.group(longData, d => d.type);
 
-                for (let [type, values] of dataByType) {
-                    if (type !== "Exports" && type !== "Imports" && type !== "Consumption") {
-                        let first = true;
-                        let prevX;
-                        let prevY;
-                        let sum = 0;
+                    // Plot lines
+                    energyLines = chartArea.selectAll(`path.${name}-line`)
+                        .data(dataByType)
+                        .join("path")
+                        .attr("class", `${name}-line`)
+                        .attr("d", ([type, values]) => line(values))
+                        .attr("fill", "none")
+                        .attr("stroke", ([type]) => colorScale(type))
+                        .attr("stroke-width", 2);
 
-                        d3.select('#svg-line').append("g")
-                            .selectAll("circle.german-circle")
-                            .data(values)
-                            .join("circle")
-                            .attr("class", "german-circle")
-                            .attr("cx", d => yearScale(d.year) + margin.left)
-                            .attr("cy", d => valueScale(d.value) + margin.top)
-                            .attr("sum", function(d) {
-                                cx = yearScale(d.year) + margin.left;
-                                cy = valueScale(d.value) + margin.top;
+                    for (let [type, values] of dataByType) {
+                        if (type !== "Exports" && type !== "Imports" && type !== "Consumption") {
+                            let first = true;
+                            let prevX;
+                            let prevY;
+                            let sum = 0;
 
-                                if (first) {
+                            d3.select(svgSelector).append("g")
+                                .selectAll(`circle.${name}-circle`)
+                                .data(values)
+                                .join("circle")
+                                .attr("class", `${name}-circle`)
+                                .attr("cx", d => yearScale(d.year) + margin.left)
+                                .attr("cy", d => valueScale(d.value) + margin.top)
+                                .attr("sum", function(d) {
+                                    cx = yearScale(d.year) + margin.left;
+                                    cy = valueScale(d.value) + margin.top;
+
+                                    if (first) {
+                                        prevX = cx;
+                                        prevY = cy;
+                                        first = false;
+                                    };
+                                    distanceFromPrevPoint = Math.hypot(prevX - cx, prevY - cy)
+                                    result = Math.round(sum + distanceFromPrevPoint);
+
                                     prevX = cx;
                                     prevY = cy;
-                                    first = false;
-                                };
-                                distanceFromPrevPoint = Math.hypot(prevX - cx, prevY - cy)
-                                result = Math.round(sum + distanceFromPrevPoint);
-
-                                prevX = cx;
-                                prevY = cy;
-                                sum = result;
-                                return result
-                            })
-                            .attr("r", 0)
-                            .attr("fill", colorScale(type))
-                            .style("opacity", 1);
+                                    sum = result;
+                                    return result
+                                })
+                                .attr("r", 0)
+                                .attr("fill", colorScale(type))
+                                .style("opacity", 1);
+                            }
                         }
-                    }
 
-                const legendGroup = svg.append("g")
-                    .attr("class", "legend-group")
-                    .attr("transform", `translate(${margin.left * 2}, ${height - margin.bottom + .5*height})`)
-                    .attr("opacity", 0); // OPACITY
+                    const legendGroup = svg.append("g")
+                        .attr("class", "legend-group")
+                        .attr("transform", `translate(${margin.left * 2}, ${height - margin.bottom + .5*height})`)
+                        .attr("opacity", 0); // OPACITY
 
-                const legend = legendGroup.selectAll(".legend")
-                    .data(dataByType.keys())
-                    .join("g")
-                    .attr("class", "legend")
-                    .attr("transform", (d, i) => `translate(0,${i * 20})`);
+                    const legend = legendGroup.selectAll(".legend")
+                        .data(dataByType.keys())
+                        .join("g")
+                        .attr("class", "legend")
+                        .attr("transform", (d, i) => `translate(0,${i * 20})`);
 
-                legend.append("rect")
-                    .attr("x", 0)
-                    .attr("width", 10)
-                    .attr("height", 10)
-                    .attr("fill", d => colorScale(d));
+                    legend.append("rect")
+                        .attr("x", 0)
+                        .attr("width", 10)
+                        .attr("height", 10)
+                        .attr("fill", d => colorScale(d));
 
-                legend.append("text")
-                    .attr("x", 15)
-                    .attr("y", 9)
-                    .text(d => d);
+                    legend.append("text")
+                        .attr("x", 15)
+                        .attr("y", 9)
+                        .text(d => d);
+                    
+                    energyLines.each(function(d, i) {
+                        const pathLength = this.getTotalLength();
+
+                        d3.select(this)
+                        .attr("stroke-dasharray", pathLength + " " + pathLength)
+                        .attr("stroke-dashoffset", pathLength);
+                    })
+
+                const newCircles = d3.selectAll(
+                    d3.selectAll(`circle.${name}-circle`).nodes().reverse()
+                );
+                reversedCircles[name] = newCircles;
+            }
                 
-                germanyEnergyLines.each(function(d, i) {
-                    const pathLength = this.getTotalLength();
-
-                    d3.select(this)
-                      .attr("stroke-dasharray", pathLength + " " + pathLength)
-                      .attr("stroke-dashoffset", pathLength);
-                })
+            drawLineChart("#svg-line", "data/germany_energy.csv", "germany")
             
             // Draw a line representing the start of Russo Ukranian
 
@@ -426,18 +450,13 @@
 
             // SOME TIMING VARIABLES:
 
-            
             const disappearDuration = 500;
             const appearDuration = disappearDuration;
             const linkDuration = 800;
             const delayMultiplier = 12;
 
             const germanLineDuration = 4000;
-            const circleDuration = 500;
-            // Make a reversed DOM selection of the german energy circles
-            const reversedGermanCircleSelection = d3.selectAll(
-                d3.selectAll("circle.german-circle").nodes().reverse()
-            );
+            const circleDuration = 500;           
 
             const zoomInDuration = 1000
             const zoomOutDuration = zoomInDuration;
@@ -584,7 +603,7 @@
                 });
 
                 maxSum = 0;
-                reversedGermanCircleSelection.each(function(d) {
+                reversedCircles["germany"].each(function(d) {
                     let d3Object = d3.select(this);
                     let circleSum = parseInt(d3Object.attr("sum"));
 
@@ -593,7 +612,6 @@
                     }
 
                     let circleDelay = Math.round(circleSum / maxSum * germanLineDuration);
-                    console.log(d3Object, circleDelay)
 
                     d3Object.transition()
                             .delay(circleDelay)
@@ -605,7 +623,6 @@
                         maxSum = circleSum;
                     }
                 });
-
 
                 d3.select('.legend-group').transition().duration(500).style("opacity", 1);
                 d3.selectAll(".x.axis").transition().duration(500).style("opacity", 1);
@@ -683,54 +700,53 @@
                     }
                 }
 
-                    if (chartType !== "germanEnergy" || chartType !== "RussiaInvades") {
-                        // d3.select("#svg-line").style("opacity", 0);
-                    d3.select("#svg-line").transition().duration(disappearDuration).style("opacity", 0);
-                    d3.selectAll("path.germany-line").each(function(d) {
-                        const pathLength = this.getTotalLength();
-                        d3.select(this)
-                            .interrupt()
-                            .transition()
-                            .duration(disappearDuration / 2)
-                            .style("opacity", 0)
-                            .attr("stroke-dashoffset", pathLength);
-                    });
-
-                    maxSum = 0;
-                    reversedGermanCircleSelection.each(function(d) {
-                        let d3Object = d3.select(this);
-                        let circleSum = parseInt(d3Object.attr("sum"));
-
-                        if (maxSum < 1) {
-                            maxSum = circleSum;
-                        }
-
-                        let circleDelay = Math.round(( 1 - circleSum / maxSum) * disappearDuration / 2);
-                        console.log(d3Object, circleDelay)
-
-                        d3Object.transition()
-                                .delay(circleDelay)
-                                .ease(d3.easeBackOut)
-                                .attr("r", 0)
-                                .duration(circleDuration);
-
-                        if (circleSum < 1) {
-                            maxSum = circleSum;
-                        }
-                    });
-                    d3.select('.legend-group').transition().duration(disappearDuration).style("opacity", 0);
-                    d3.selectAll(".x.axis").transition().duration(disappearDuration).style("opacity", 0);
-                    d3.selectAll(".y.axis").transition().duration(500).style("opacity", 0);
-
-                    zoomOutToWorld(0)
-                    // ALLEGEDLY reset outline of Germnay 
-                    svg.selectAll("path.country")
+                if (chartType !== "germanEnergy" || chartType !== "RussiaInvades") {
+                    // d3.select("#svg-line").style("opacity", 0);
+                d3.select("#svg-line").transition().duration(disappearDuration).style("opacity", 0);
+                d3.selectAll("path.germany-line").each(function(d) {
+                    const pathLength = this.getTotalLength();
+                    d3.select(this)
+                        .interrupt()
                         .transition()
-                        .duration(500)
-                        .style("opacity", 0.4)
-                        .style("stroke", "white")
-                        .style("stroke-width", 1)
+                        .duration(disappearDuration / 2)
+                        .style("opacity", 0)
+                        .attr("stroke-dashoffset", pathLength);
+                });
+
+                maxSum = 0;
+                reversedCircles["germany"].each(function(d) {
+                    let d3Object = d3.select(this);
+                    let circleSum = parseInt(d3Object.attr("sum"));
+
+                    if (maxSum < 1) {
+                        maxSum = circleSum;
                     }
+
+                    let circleDelay = Math.round(( 1 - circleSum / maxSum) * disappearDuration / 2);
+
+                    d3Object.transition()
+                            .delay(circleDelay)
+                            .ease(d3.easeBackOut)
+                            .attr("r", 0)
+                            .duration(circleDuration);
+
+                    if (circleSum < 1) {
+                        maxSum = circleSum;
+                    }
+                });
+                d3.select('.legend-group').transition().duration(disappearDuration).style("opacity", 0);
+                d3.selectAll(".x.axis").transition().duration(disappearDuration).style("opacity", 0);
+                d3.selectAll(".y.axis").transition().duration(500).style("opacity", 0);
+
+                zoomOutToWorld(0)
+                // ALLEGEDLY reset outline of Germnay 
+                svg.selectAll("path.country")
+                    .transition()
+                    .duration(500)
+                    .style("opacity", 0.4)
+                    .style("stroke", "white")
+                    .style("stroke-width", 1)
+                }
 
                 // If we're NOT looking at the tradelinks viz OR the initial map
                 if (!["tradeLinks", "plainMap"].includes(chartType)) {
@@ -743,7 +759,6 @@
                 // TODO
                 // Add more cleaning for the specific visualizations
                 // For example, add a if(chartType !== "germanEnergy")
-
             }
 
             // Credit for the scroller code:
