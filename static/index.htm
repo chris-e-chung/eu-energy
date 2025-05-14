@@ -118,6 +118,8 @@
                 countrySurfaceArea[d["Country Name"]] = d["2022"];
             });
 
+            const germanyData = await d3.csv("data/germany_energy.csv", d3.autoType );
+
             // Draw everything first, but set their visibility to hidden to hide them and show as needed l8r
             // Setting their visibility to hidden doesn't necessarily mean "display: none"
             function pageLoad() {
@@ -183,7 +185,7 @@
                 }
 
                 // Draw the trade lines
-                const tradeLines = svg.append("g").selectAll("path.trade-line").data(tradeLinks).join("path")
+                const tradeLines = svg.append("g").selectAll("path.trade-link").data(tradeLinks).join("path")
                                       .attr("class", "trade-link")
                                       .attr("d", d => {
                                             // Randomize the points somewhat so they don't all come out of / go to the same place
@@ -254,329 +256,431 @@
                 let chartArea = bargraph_g.append("g").attr("id","points")
                     .attr("transform","translate("+margin.left+","+margin.top+")");
 
-                const loadScatter = async function() {
-
-                    let dataset = await d3.csv("data/germany_energy.csv", d3.autoType )
-                    console.log(dataset);
-                    // Reformat data 
-                    const longData = [];
-                        dataset.forEach(row => {
-                        const type = row.Type;
-                        if (type === "Consumption" || type === "Exports" || type === "Imports") return;
-                        Object.keys(row).forEach(key => {
-                            if (key !== "Type" ) {
-                                longData.push({
-                                    type: type,
-                                    year: +key,
-                                    value: +row[key]
-                                });
-                            }
-                        });
-                        });
-                    console.log(longData);
-
-                    const yearExtent = d3.extent(longData, d => d.year);
-                    const yearScale = d3.scaleLinear().domain(yearExtent).range([0, chartWidth]);
-
-                    const valueExtent = d3.extent(longData, d => d.value);
-                    const valueScale = d3.scaleLinear().domain(valueExtent).range([chartHeight, 0]);
-                    // console.log(yearExtent);
-                    // console.log(valueExtent);
-                    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
-
-                    const leftAxis = d3.axisLeft(valueScale)
-                                    .tickFormat(d3.format(".2s"));
-
-                    const bottomAxis = d3.axisBottom(yearScale)
-                                        .tickFormat(d3.format("~f"));
-                    // Append axes
-                    annotations.append("g")
-                    .attr("class", "y axis")
-                    .attr("transform", `translate(${margin.left - 10},${margin.top})`)
-                    .call(leftAxis)
-                    .style("opacity", 0);
-
-                    annotations.append("g")
-                    .attr("class", "x axis")
-                    .attr("transform", `translate(${margin.left},${chartHeight + margin.top + 10})`)
-                    .call(bottomAxis)
-                    .style("opacity", 0);
-
-
-                    const line = d3.line()
-                        .x(d => yearScale(d.year))
-                        .y(d => valueScale(d.value));
-
-                    // Group data by type
-                    const dataByType = d3.group(longData, d => d.type);
-
-                    // Plot lines
-                    chartArea.selectAll(".line")
-                        .data(dataByType)
-                        .join("path")
-                        .attr("class", "line")
-                        .attr("d", ([type, values]) => line(values))
-                        // .attr("d", ([type, values]) => (type !== "Exports" && type !== "Imports" && type !== "Consumption") ? line(values) : null)
-                        .attr("fill", "none")
-                        .attr("stroke", ([type]) => colorScale(type))
-                        .attr("stroke-width", 2)
-
-                    for (let [type, values] of dataByType) {
-                        if (type !== "Exports" && type !== "Imports" && type !== "Consumption") {
-                            d3.select('#svg-line').append("g")
-                                .selectAll("circle")
-                                .data(values)
-                                .join("circle")
-                                .attr("class", "line")
-                                .attr("cx", d => yearScale(d.year) + margin.left)
-                                .attr("cy", d => valueScale(d.value) + margin.top)
-                                .attr("r", 3)
-                                .attr("fill", colorScale(type))
-                                .style("opacity", 1);
-                            }
+                // Reformat data 
+                const longData = [];
+                    germanyData.forEach(row => {
+                    const type = row.Type;
+                    if (type === "Consumption" || type === "Exports" || type === "Imports") return;
+                    Object.keys(row).forEach(key => {
+                        if (key !== "Type" ) {
+                            longData.push({
+                                type: type,
+                                year: +key,
+                                value: +row[key]
+                            });
                         }
-                    const legendGroup = svg.append("g")
-                        .attr("class", "legend-group")
-                        .attr("transform", `translate(${margin.left * 2}, ${height - margin.bottom + .5*height})`)
-                        .attr("opacity", 0); // OPACITY
+                    });
+                    });
 
-                    const legend = legendGroup.selectAll(".legend")
-                        .data(dataByType.keys())
-                        .join("g")
-                        .attr("class", "legend")
-                        .attr("transform", (d, i) => `translate(0,${i * 20})`);
+                const yearExtent = d3.extent(longData, d => d.year);
+                const yearScale = d3.scaleLinear().domain(yearExtent).range([0, chartWidth]);
 
-                    legend.append("rect")
-                        .attr("x", 0)
-                        .attr("width", 10)
-                        .attr("height", 10)
-                        .attr("fill", d => colorScale(d));
+                const valueExtent = d3.extent(longData, d => d.value);
+                const valueScale = d3.scaleLinear().domain(valueExtent).range([chartHeight, 0]);
 
-                    legend.append("text")
-                        .attr("x", 15)
-                        .attr("y", 9)
-                        .text(d => d);
+                const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
+                const leftAxis = d3.axisLeft(valueScale)
+                                .tickFormat(d3.format(".2s"));
 
-                }
-                loadScatter();
+                const bottomAxis = d3.axisBottom(yearScale)
+                                    .tickFormat(d3.format("~f"));
+                // Append axes
+                annotations.append("g")
+                .attr("class", "y axis")
+                .attr("transform", `translate(${margin.left - 10},${margin.top})`)
+                .call(leftAxis)
+                .style("opacity", 0);
 
+                annotations.append("g")
+                .attr("class", "x axis")
+                .attr("transform", `translate(${margin.left},${chartHeight + margin.top + 10})`)
+                .call(bottomAxis)
+                .style("opacity", 0);
 
-                //
+                const line = d3.line()
+                    .x(d => yearScale(d.year))
+                    .y(d => valueScale(d.value));
 
-                // Draw a line representing the start of Russo Ukranian
+                // Group data by type
+                const dataByType = d3.group(longData, d => d.type);
 
-                // Russian and Ukranian energy production
+                // Plot lines
+                germanyEnergyLines = chartArea.selectAll("path.germany-line")
+                    .data(dataByType)
+                    .join("path")
+                    .attr("class", "germany-line")
+                    .attr("d", ([type, values]) => line(values))
+                    // .attr("d", ([type, values]) => (type !== "Exports" && type !== "Imports" && type !== "Consumption") ? line(values) : null)
+                    .attr("fill", "none")
+                    .attr("stroke", ([type]) => colorScale(type))
+                    .attr("stroke-width", 2);
 
-                // Play with yourself (What?)
+                for (let [type, values] of dataByType) {
+                    if (type !== "Exports" && type !== "Imports" && type !== "Consumption") {
+                        let first = true;
+                        let prevX;
+                        let prevY;
+                        let sum = 0;
 
+                        d3.select('#svg-line').append("g")
+                            .selectAll("circle.german-circle")
+                            .data(values)
+                            .join("circle")
+                            .attr("class", "german-circle")
+                            .attr("cx", d => yearScale(d.year) + margin.left)
+                            .attr("cy", d => valueScale(d.value) + margin.top)
+                            .attr("sum", function(d) {
+                                cx = yearScale(d.year) + margin.left;
+                                cy = valueScale(d.value) + margin.top;
 
+                                if (first) {
+                                    prevX = cx;
+                                    prevY = cy;
+                                    first = false;
+                                };
+                                distanceFromPrevPoint = Math.hypot(prevX - cx, prevY - cy)
+                                result = Math.round(sum + distanceFromPrevPoint);
 
-
-                // The following functions are called whenever we need to make something visible
-                // They shouldn't 'add' anything to the svg - only edit visibility via opacity, radius, etc.
-
-                // By draw, we mean make visible - they should already be created on the svg
-                // Draw the map
-                function draw0() {
-                    clean("plainMap");
-
-                    svg.selectAll("path.country")
-                      .transition()
-                      .duration(500)
-                      .style("opacity", 0.8);
-                }
-
-                // Create a dict to keep track of all of the timeouts that we currently have running
-                const tradeLinkTimeouts = {};
-                // Draw the trade links
-                function draw1() {
-                    clean("tradeLinks");
-
-                    svg.selectAll("path.country")
-                      .transition()
-                      .duration(500)
-                      .style("opacity", 0.8);
-
-                    // Use the amt of trade lines to determine delay later
-                    length = tradeLines.size();
-                    // Arbitrary duration
-                    const linkDuration = 800;
-                    // Delay multiplier that is directly applied to delay
-                    const delayMultiplier = 12;
-                   
-                    tradeLines.each(function(d, i) {
-                        const pathLength = this.getTotalLength();
-                        // We rely on delay to determine when each path and beginning circle should be shown
-                        // We also later add the duration to the delay to determine when the end circle should be shown
-                        const delay = length * Math.random() * delayMultiplier;
-                        eachObject = this;
-
-                        // Make it into a function so that we can call it repeatedly
-                        // @param d3Object - a tradeLine
-                        function repeat(d3Object) {
-                            // Set the visibility to 0 if it isn't already
-                            d3.select(d3Object)
-                                .transition()
-                                .duration(500)
-                                .attr("stroke-dashoffset", pathLength)
-                                .style("opacity", 0)
-                            d3.select(`circle#start${i}`)
-                                .transition()
-                                .duration(500)
-                                .style("opacity", 0);
-                            d3.select(`circle#end${i}`)
-                                .transition()
-                                .duration(0)
-                                .style("opacity", 0);
-
-                            // Now, make them visible
-                            d3.select(d3Object)
-                                .transition()
-                                .delay(delay)
-                                // d3.ease documentation:
-                                // https://d3js.org/d3-ease
-                                .ease(d3.easePoly.exponent(4))
-                                .attr("stroke-dashoffset", 0)
-                                .style("opacity", 1)
-                                .duration(linkDuration);
-                            d3.select(`circle#start${i}`)
-                                .transition()
-                                .delay(delay)
-                                .style("opacity", 1);
-                            d3.select(`circle#end${i}`)
-                                .transition()
-                                .delay(delay + linkDuration)
-                                .style("opacity", 1)
-                                .on("end", () => {
-                                    // When we end our animation, queue up another one by repeating the whole thing
-                                    // Add the timeout to our dict to keep track of it
-                                    tradeLinkTimeouts[i] = setTimeout(() => repeat(d3Object), delay + linkDuration + 2000);
-                                });
-                            }
-                            // Initially call repeat to get the whole thing started
-                            repeat(eachObject);
-                        })
-                    }
-
-
-                // TODO
-                // Add functionality to the drawing functions for the viz's
-            
-                // German energy production
-                function draw2() {
-                    clean("germanEnergy");
-                    // keep opcaity of map
-                    svg.selectAll("path.country")
-                           .transition()
-                           .duration(500)
-                           .style("opacity", 1)
-                    // zoom into map
-                    // show the line graph
-
-                    d3.select("#svg-line").transition().duration(500).style("opacity", 1);
-                    d3.select('.legend-group').transition().duration(500).style("opacity", 1);
-                    d3.selectAll(".x.axis").transition().duration(500).style("opacity", 1);
-                    d3.selectAll(".y.axis").transition().duration(500).style("opacity", 1);
-                }
-
-                // Draw a line representing the start of Russo Ukranian
-                function draw3() {
-                    clean("someOtherChart");
-                }
-
-                // Russian and Ukranian energy production
-                function draw4() {
-                    clean("someOtherChart");
-
-                }
-
-                // Play with yourself (What?)
-                function draw5() {
-                    clean("someOtherChart");
-
-                }
-
-                // Stores all of the drawing functions so we can easily refer to them
-                activationFunctions = [
-                    draw0,
-                    draw1,
-                    draw2,
-                    draw3,
-                    draw4,
-                    draw5
-                ]
-
-                // Removes visibility from every other chart than the one specified
-                // @param {string} chartType - a str of the chart to clean for (the only one we're making visible)
-                function clean(chartType) {
-
-                    // If we're NOT looking at the tradelinks viz
-                    if (chartType !== "tradeLinks") {
-                        svg.selectAll("circle.trade-link-circle").transition().duration(0).style("opacity", 0);
-
-                        // Interrupt every timeout in the dict
-                        for (const key in tradeLinkTimeouts) {
-                            clearTimeout(tradeLinkTimeouts[key]);
+                                prevX = cx;
+                                prevY = cy;
+                                sum = result;
+                                return result
+                            })
+                            .attr("r", 0)
+                            .attr("fill", colorScale(type))
+                            .style("opacity", 1);
                         }
-
-                        // Then, interrupt every current transition and set visibility to 0
-                        tradeLines.each(function(d) {
-                            const pathLength = this.getTotalLength();
-                            d3.select(this)
-                              .interrupt()
-                              .transition()
-                              .duration(500)
-                              .style("opacity", 0)
-                              .attr("stroke-dashoffset", pathLength);
-                        })
                     }
 
-                    if (chartType !== "germanEnergy") {
-                        // d3.select("#svg-line").style("opacity", 0);
-                        d3.select("#svg-line").transition().duration(500).style("opacity", 0);
-                        d3.select('.legend-group').transition().duration(500).style("opacity", 0);
-                        d3.selectAll(".x.axis").transition().duration(500).style("opacity", 0);
-                        d3.selectAll(".y.axis").transition().duration(500).style("opacity", 0);
-                    }
+                const legendGroup = svg.append("g")
+                    .attr("class", "legend-group")
+                    .attr("transform", `translate(${margin.left * 2}, ${height - margin.bottom + .5*height})`)
+                    .attr("opacity", 0); // OPACITY
 
-                    // If we're NOT looking at the tradelinks viz OR the initial map
-                    if (!["tradeLinks", "plainMap"].includes(chartType)) {
-                        svg.selectAll("path.country")
-                           .transition()
-                           .duration(500)
-                           .style("opacity", 0)
-                    }
+                const legend = legendGroup.selectAll(".legend")
+                    .data(dataByType.keys())
+                    .join("g")
+                    .attr("class", "legend")
+                    .attr("transform", (d, i) => `translate(0,${i * 20})`);
 
-                    // TODO
-                    // Add more cleaning for the specific visualizations
-                    // For example, add a if(chartType !== "germanEnergy")
+                legend.append("rect")
+                    .attr("x", 0)
+                    .attr("width", 10)
+                    .attr("height", 10)
+                    .attr("fill", d => colorScale(d));
 
-                }
+                legend.append("text")
+                    .attr("x", 15)
+                    .attr("y", 9)
+                    .text(d => d);
+                
+                germanyEnergyLines.each(function(d, i) {
+                    const pathLength = this.getTotalLength();
 
-                // Credit for the scroller code:
-                // https://vallandingham.me/scroller.html 
-                let scroll = scroller().container(d3.select('#graphic'));
-                scroll();
-
-                let lastIndex, activeIndex = 0;
-
-                scroll.on('active', function(index) {
-                    d3.selectAll('.step')
-                        .transition().duration(500)
-                        .style('opacity', function (d, i) {return i === index ? 1 : 0.1;});
-                    
-                    activeIndex = index
-                    let sign = (activeIndex - lastIndex) < 0 ? -1 : 1; 
-                    let scrolledSections = d3.range(lastIndex + sign, activeIndex + sign, sign);
-                    scrolledSections.forEach(i => {
-                        activationFunctions[i]();
-                    })
-                    lastIndex = activeIndex;
+                    d3.select(this)
+                      .attr("stroke-dasharray", pathLength + " " + pathLength)
+                      .attr("stroke-dashoffset", pathLength);
                 })
+            
+            // Draw a line representing the start of Russo Ukranian
+
+            // Russian and Ukranian energy production
+
+            // Play with yourself (What?)
+
             }
             pageLoad();
 
+
+            // The following functions are called whenever we need to make something visible
+            // They shouldn't 'add' anything to the svg - only edit visibility via opacity, radius, etc.
+
+            // SOME TIMING VARIABLES:
+
+            
+            const disappearDuration = 500;
+            const appearDuration = disappearDuration;
+            const linkDuration = 800;
+            const delayMultiplier = 12;
+
+            const germanLineDuration = 4000;
+            const circleDuration = 500;
+            // Make a reversed DOM selection of the german energy circles
+            const reversedGermanCircleSelection = d3.selectAll(
+                d3.selectAll("circle.german-circle").nodes().reverse()
+            );
+
+            
+
+
+            // By draw, we mean make visible - they should already be created on the svg
+            // Draw the map
+            function draw0() {
+                clean("plainMap");
+
+                svg.selectAll("path.country")
+                    .transition()
+                    .duration(500)
+                    .style("opacity", 0.8);
+            }
+
+            // Create a dict to keep track of all of the timeouts that we currently have running
+            const tradeLinkTimeouts = {};
+            // Draw the trade links
+            function draw1() {
+                clean("tradeLinks");
+
+                svg.selectAll("path.country")
+                    .transition()
+                    .duration(disappearDuration)
+                    .style("opacity", 0.8);
+
+                let tradeLines = svg.selectAll("path.trade-link");
+
+                // Use the amt of trade lines to determine delay later
+                length = tradeLines.size();
+                // Arbitrary duration
+                
+                tradeLines.each(function(d, i) {
+                    const pathLength = this.getTotalLength();
+                    // We rely on delay to determine when each path and beginning circle should be shown
+                    // We also later add the duration to the delay to determine when the end circle should be shown
+                    const delay = length * Math.random() * delayMultiplier;
+                    eachObject = this;
+
+                    // Make it into a function so that we can call it repeatedly
+                    // @param d3Object - a tradeLine
+                    function repeat(d3Object) {
+                        // Set the visibility to 0 if it isn't already
+                        d3.select(d3Object)
+                            .transition()
+                            .duration(disappearDuration)
+                            .attr("stroke-dashoffset", pathLength)
+                            .style("opacity", 0)
+                        d3.select(`circle#start${i}`)
+                            .transition()
+                            .duration(disappearDuration)
+                            .style("opacity", 0);
+                        d3.select(`circle#end${i}`)
+                            .transition()
+                            .duration(0)
+                            .style("opacity", 0);
+
+                        // Now, make them visible
+                        d3.select(d3Object)
+                            .transition()
+                            .delay(delay)
+                            // d3.ease documentation:
+                            // https://d3js.org/d3-ease
+                            .ease(d3.easePoly.exponent(4))
+                            .attr("stroke-dashoffset", 0)
+                            .style("opacity", 1)
+                            .duration(linkDuration);
+                        d3.select(`circle#start${i}`)
+                            .transition()
+                            .delay(delay)
+                            .style("opacity", 1);
+                        d3.select(`circle#end${i}`)
+                            .transition()
+                            .delay(delay + linkDuration)
+                            .style("opacity", 1)
+                            .on("end", () => {
+                                // When we end our animation, queue up another one by repeating the whole thing
+                                // Add the timeout to our dict to keep track of it
+                                tradeLinkTimeouts[i] = setTimeout(() => repeat(d3Object), delay + linkDuration + 2000);
+                            });
+                        }
+                        // Initially call repeat to get the whole thing started
+                        repeat(eachObject);
+                    })
+                }
+
+
+            // TODO
+            // Add functionality to the drawing functions for the viz's
+        
+            // German energy production
+            function draw2() {
+                clean("germanEnergy");
+                // keep opcaity of map
+                svg.selectAll("path.country")
+                        .transition()
+                        .duration(500)
+                        .style("opacity", 1)
+                // zoom into map
+                // show the line graph
+
+                d3.select("#svg-line").transition().duration(appearDuration).style("opacity", 1);
+
+                d3.selectAll("path.germany-line").each(function(d, i) {
+                    const pathLength = this.getTotalLength();
+
+                    d3.select(this)
+                        .transition()
+                        // d3.ease documentation:
+                        // https://d3js.org/d3-ease
+                        .ease(d3.easeLinear)
+                        .attr("stroke-dashoffset", 0)
+                        .style("opacity", 1)
+                        .duration(germanLineDuration);
+                });
+
+                maxSum = 0;
+                reversedGermanCircleSelection.each(function(d) {
+                    let d3Object = d3.select(this);
+                    let circleSum = parseInt(d3Object.attr("sum"));
+
+                    if (maxSum < 1) {
+                        maxSum = circleSum;
+                    }
+
+                    let circleDelay = Math.round(circleSum / maxSum * germanLineDuration);
+                    console.log(d3Object, circleDelay)
+
+                    d3Object.transition()
+                            .delay(circleDelay)
+                            .ease(d3.easeBackOut)
+                            .attr("r", 4)
+                            .duration(circleDuration);
+
+                    if (circleSum < 1) {
+                        maxSum = circleSum;
+                    }
+                });
+
+
+                d3.select('.legend-group').transition().duration(500).style("opacity", 1);
+                d3.selectAll(".x.axis").transition().duration(500).style("opacity", 1);
+                d3.selectAll(".y.axis").transition().duration(500).style("opacity", 1);
+            }
+
+            // Draw a line representing the start of Russo Ukranian
+            function draw3() {
+                clean("someOtherChart");
+            }
+
+            // Russian and Ukranian energy production
+            function draw4() {
+                clean("someOtherChart");
+
+            }
+
+            // Play with yourself (What?)
+            function draw5() {
+                clean("someOtherChart");
+
+            }
+
+            // Stores all of the drawing functions so we can easily refer to them
+            activationFunctions = [
+                draw0,
+                draw1,
+                draw2,
+                draw3,
+                draw4,
+                draw5
+            ]
+
+            // Removes visibility from every other chart than the one specified
+            // @param {string} chartType - a str of the chart to clean for (the only one we're making visible)
+            function clean(chartType) {
+
+                // If we're NOT looking at the tradelinks viz
+                if (chartType !== "tradeLinks") {
+                    svg.selectAll("circle.trade-link-circle").transition().duration(0).style("opacity", 0);
+
+                    // Interrupt every timeout in the dict
+                    for (const key in tradeLinkTimeouts) {
+                        clearTimeout(tradeLinkTimeouts[key]);
+                    }
+
+                    // Then, interrupt every current transition and set visibility to 0
+                    svg.selectAll("path.trade-link").each(function(d) {
+                        const pathLength = this.getTotalLength();
+                        d3.select(this)
+                            .interrupt()
+                            .transition()
+                            .duration(disappearDuration)
+                            .style("opacity", 0)
+                            .attr("stroke-dashoffset", pathLength);
+                    })
+                }
+
+                if (chartType !== "germanEnergy") {
+                    // d3.select("#svg-line").style("opacity", 0);
+                    d3.select("#svg-line").transition().duration(disappearDuration).style("opacity", 0);
+                    d3.selectAll("path.germany-line").each(function(d) {
+                        const pathLength = this.getTotalLength();
+                        d3.select(this)
+                            .interrupt()
+                            .transition()
+                            .duration(disappearDuration / 2)
+                            .style("opacity", 0)
+                            .attr("stroke-dashoffset", pathLength);
+                    });
+
+                    maxSum = 0;
+                    reversedGermanCircleSelection.each(function(d) {
+                        let d3Object = d3.select(this);
+                        let circleSum = parseInt(d3Object.attr("sum"));
+
+                        if (maxSum < 1) {
+                            maxSum = circleSum;
+                        }
+
+                        let circleDelay = Math.round(( 1 - circleSum / maxSum) * disappearDuration / 2);
+                        console.log(d3Object, circleDelay)
+
+                        d3Object.transition()
+                                .delay(circleDelay)
+                                .ease(d3.easeBackOut)
+                                .attr("r", 0)
+                                .duration(circleDuration);
+
+                        if (circleSum < 1) {
+                            maxSum = circleSum;
+                        }
+                    });
+                    d3.select('.legend-group').transition().duration(disappearDuration).style("opacity", 0);
+                    d3.selectAll(".x.axis").transition().duration(disappearDuration).style("opacity", 0);
+                    d3.selectAll(".y.axis").transition().duration(disappearDuration).style("opacity", 0);
+                }
+
+                // If we're NOT looking at the tradelinks viz OR the initial map
+                if (!["tradeLinks", "plainMap"].includes(chartType)) {
+                    svg.selectAll("path.country")
+                        .transition()
+                        .duration(disappearDuration)
+                        .style("opacity", 0)
+                }
+
+                // TODO
+                // Add more cleaning for the specific visualizations
+                // For example, add a if(chartType !== "germanEnergy")
+
+            }
+
+            // Credit for the scroller code:
+            // https://vallandingham.me/scroller.html 
+            let scroll = scroller().container(d3.select('#graphic'));
+            scroll();
+
+            let lastIndex, activeIndex = 0;
+
+            scroll.on('active', function(index) {
+                d3.selectAll('.step')
+                    .transition().duration(500)
+                    .style('opacity', function (d, i) {return i === index ? 1 : 0.1;});
+                
+                activeIndex = index
+                let sign = (activeIndex - lastIndex) < 0 ? -1 : 1; 
+                let scrolledSections = d3.range(lastIndex + sign, activeIndex + sign, sign);
+                scrolledSections.forEach(i => {
+                    activationFunctions[i]();
+                })
+                lastIndex = activeIndex;
+            })
         };
         requestData();
     </script>
