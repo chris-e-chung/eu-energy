@@ -28,50 +28,163 @@
     <div id="graphic">
         <div id="sections">
             <section class="step">
-                <h1>The Energy Trade</h1>
+                <h1>Energy Trade and the Russian War</h1>
                 <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin interdum diam a dui interdum, eu suscipit turpis rhoncus. Phasellus accumsan, felis a fringilla iaculis, risus turpis porta lectus, faucibus tincidunt neque leo id nibh. Proin malesuada nisl sed turpis aliquam imperdiet. Nullam leo erat, faucibus ac vestibulum in, sollicitudin vel justo. Mauris sagittis, lectus sed dignissim aliquet, enim eros auctor tortor, id ullamcorper turpis nisi ac arcu. In condimentum porta ex eget fringilla.            </p>
+                    Energy is one of the commodities we least think about when it comes to trade and production in our everyday lives.
+                    It's not flashy like an imported German car, or as delectable as an imported French cheese, but it still plays an
+                    important role in international markets. This is a little project that seeks to visualize its trade and production
+                    in Europe and Eurasia over the past few years.
+                </p>    
+                <p id="warning-text">wait to scroll until i'm translucent</p>
             </section>
             <section class="step">
                 <p>
-                    I mean, look at all of that trade! It's hard to get a grasp on the finer details. Let's focus on a specific place - say, Germany.
+                    To our right, we're seeing all of the yearly trade from one country to another from 2018 to 2023.
+                    Circles represent start points! I mean, look at all of that trade! 
+                    It's hard to get a grasp on the finer details. 
+                    Let's focus on a specific place - say, Germany - and its energy production.
                 </p>
             </section>
             <section class="step">
                 <p>
-                    We can see here that Germany ---------. But in ------, there's a big shift -- ----.
+                    We can see here that Germany's relied heavily on fossil fuels since 2000, with coal as their main source. Nuclear's been 
+                    on the decline, and renewables were greatly exceeded by fossil fuels. But, something happened in 2016.
                 </p>
-                <div id="GermanEnergy">
-                    <svg id="svg-line" width="600" height="500" opacity="0"></svg>
+                <p>
+                    (You can also hover on the categories to highlight, and the points to see values)
+                </p>
+                <div>
+                    <div class="legend-container">
+                        <div class="legend-div" >
+                        </div>
+                        <h3>
+                            Germany's Energy Production
+                        </h3>
+                    </div>
+                    <div id="GermanEnergy">
+                        <svg id="svg-line" width="600" height="500" opacity="0"></svg>
+                    </div>
                 </div>
             </section>
             <section class="step">
                 <p>
-                    In -----, Russian invaded Ukraine- ------------.
+                    In 2016, Russia annexed the Crimean region in Ukraine. This caused a lot of European nations to sanction Russia, who
+                    supplies a good amount of the fossil fuels in Europe. But it doesn't seem like it affected domestic production too much.
                 </p>
+                <div>
+                    <div class="legend-container">
+                        <div class="legend-div" >
+                        </div>
+                        <h3>
+                            Russia's Energy Production
+                        </h3>
+                    </div>
+                    <div id="RussianEnergy">
+                        <svg id="svg-line-2" width="600" height="500" opacity="0"></svg>
+                    </div>
+                </div>
             </section>
             <section class="step">
                 <p>
-                    Praesent aliquam, velit ut interdum efficitur, turpis tellus feugiat metus, non semper justo dui vel elit. Proin euismod lacinia sollicitudin. Interdum et malesuada fames ac ante ipsum primis in faucibus. Duis efficitur, erat non ullamcorper porta, nibh mi aliquam arcu, ac feugiat leo odio et mauris. 
+                    To see how other European countries were affected, click on them on the right. The lines that come out are countries
+                    that the selected country trades energy to.
                 </p>
+                <div>
+                    <div class="legend-container">
+                        <div class="legend-div" >
+                        </div>
+                        <h3 id="energy-header">
+                            France's Energy Production
+                        </h3>
+                    </div>
+                    <div id="mass-line-chart-container">
+                    </div>
+                </div>
             </section>
             <section class="step">
                 <p>
-                    Look at any country you'd like, here!
+                    The End!
+                </p>
+                <p>
+                    The creators:
+                </p>
+                <ul style="list-style: none;">
+                    <li>
+                        Chris C.
+                    </li>
+                    <li>
+                        Max M.
+                    </li>
+                </ul>
+                <p>
+                    Scrolling functionality credit to <a href="https://vallandingham.me/scroller.html">Jim Vallandingham</a>
+                </p>
+                <p>
+                    Heavy stylistic inspiration from <a href="https://medium.com/data-science/how-i-created-an-interactive-scrolling-visualisation-with-d3-js-and-how-you-can-too-e116372e2c73">Cuthbert Chow</a>
                 </p>
             </section>
         </div>
         <div id="vis">
             <svg id="svg" width="1000" height="1000"></svg>
         </div>
-        <div id="RussianEnergy">
-            <svg id="svg-line-2" width="600" height="500" opacity="0"></svg>
-        </div>
+
     </div>
     <div id="tooltip" class="tooltip"></div>
 
 
     <script>
+        // SOME TIMING VARIABLES:
+
+        const disappearDuration = 500;
+        const appearDuration = disappearDuration;
+        const linkDuration = 800;
+        const delayMultiplier = 12;
+
+        const germanLineDuration = 4000;
+        const circleDuration = 500;      
+
+        // Just a convenient function to get rid of whitespace
+        // @param {string} str - a string
+        // @returns {string} the str with the whitespace removed
+        function removeWhiteSpace(str) {
+            return str.replace(/\s/g,'');
+        }
+
+        //
+        function removeTradeLinks(keepSelectedCountry = false) {
+            svg.selectAll("circle.start")
+                .filter(function() {
+                    return keepSelectedCountry
+                        ? d3.select(this).attr("from") !== removeWhiteSpace(previousCountry.toLowerCase())
+                        : true;
+                })
+                .transition()
+                .duration(disappearDuration)
+                .style("opacity", 0)
+                .on("end", function(d) {
+                    d3.select(this).style("fill", "black")
+                });
+
+            // Then, interrupt every current transition and set visibility to 0
+            svg.selectAll("path.trade-link")
+                .filter(function() {
+                    return keepSelectedCountry
+                        ? d3.select(this).attr("from") !== removeWhiteSpace(previousCountry.toLowerCase())
+                        : true;
+                }).each(function(d) {
+                    const pathLength = this.getTotalLength();
+                    d3.select(this)
+                        .interrupt()
+                        .transition()
+                        .duration(disappearDuration)
+                        .style("opacity", 0)
+                        .attr("stroke-dashoffset", pathLength)
+                        .on("end", function(d) {
+                            d3.select(this).style("stroke", "black")
+                });
+            })
+        }
+
         async function requestData() {
             // Boiler plate stuff
             svg = d3.select("svg#svg");
@@ -111,15 +224,6 @@
                     );
             });
             
-            // Zoom Behavior
-            const zoom = d3.zoom()
-                .scaleExtent([1, 8])
-                .on("zoom", function (event) {
-                    svg.selectAll("path").attr("transform", event.transform);
-                });
-            // Would allow user zooming 
-            // svg.call(zoom);
-
             // Projection documentation:
             // https://d3js.org/d3-geo/projection
             const projection = d3.geoConicConformal()
@@ -128,18 +232,134 @@
                             .translate([width / 2, height / 2]);
             const path = d3.geoPath().projection(projection);
 
+            let tempMappedCountryNames = [];
             // Add the paths to the svg
+            // Keep track of whether or not we allow mouseovers
+            lineChartMousing = false;
+            previousCountry = "France";
+            previousCountryNode = null;
+
             map = svg.append("g").selectAll("path.country").data(europeFeatures)
                 .join("path")
                 .attr("d", path)
                 .attr("class", "country")
+                .attr("country", d => d.properties.name)
                 // I chose these colors from here:
                 // https://colorhunt.co/palette/89a8b2b3c8cfe5e1daf1f0e8
                 .style("stroke", "#F1F0E8")
                 .style("stroke-width", '1px')
                 .style("fill", "#89A8B2")
-                .style("opacity", 0.8);
+                .style("opacity", 0.8)
+                .attr("", (d) => {
+                    tempMappedCountryNames.push(d.properties.name)
+                })
+                .on("mouseover", function(event, d) {
+                    const country = d3.select(this);
+                    countryName = d.properties.name;
+                    lowerCaseName = removeWhiteSpace(countryName.toLowerCase());
 
+                    if (lineChartMousing && !country.classed("selected-country")) {
+                        country.classed("hovered-country", true);
+
+                        // Filter all the trade links that aren't currently selected
+                        d3.selectAll(".trade-link")
+                        .each(function(d, i) {
+                            const pathLength = this.getTotalLength();
+
+                            if (d3.select(this).attr("from") === lowerCaseName && d3.select(this).attr("from") !== removeWhiteSpace(previousCountry.toLowerCase())) {
+                                d3.select(this)
+                                    .style("stroke", "grey")
+                                    .transition()
+                                    // d3.ease documentation:
+                                    // https://d3js.org/d3-ease
+                                    .ease(d3.easePoly.exponent(4))
+                                    .attr("stroke-dashoffset", 0)
+                                    .style("opacity", 1)
+                                    .duration(linkDuration);
+                                d3.select(`circle#start${i}`)
+                                    .style("fill", "grey")
+                                    .transition()
+                                    .style("opacity", 1);
+                            }})
+                    }
+                })
+                .on("mouseout", function(event, d) {
+                    const country = d3.select(this);
+
+                    if (lineChartMousing && !country.classed("selected-country")) {
+                        country.classed("hovered-country", false);
+
+                        removeTradeLinks(keepSelectedCountry=true);
+                    }
+                })
+                .on("click", function(event, path) {
+                    country = d3.select(this);
+                    countryName = path.properties.name;
+                    lowerCaseName = removeWhiteSpace(countryName.toLowerCase());
+
+                    console.log(countryName)
+
+                    if (lineChartMousing) {
+                        if (!country.classed("selected-country")) {
+                            // if it's not selected already
+                            removeLineChart(previousCountry);
+
+                            d3.select("h3#energy-header").text(`${countryName}'s Energy Production`);
+                            
+                            d3.selectAll("path.country")
+                                .classed("selected-country", false);
+
+                            country.classed("hovered-country", false);
+                            country.classed("selected-country", true);
+
+                            svg.selectAll("path.country")
+                                .transition()
+                                .duration(appearDuration)
+                                .style("opacity", d => d.properties.name === countryName ? 1 : 0.4);
+
+                            d3.select(`${lowerCaseName}-line-chart`)
+                                    .transition()
+                                    .duration(appearDuration)
+                                    .style("opacity", 1);
+
+                            d3.select(`#${lowerCaseName}-line-chart`).raise();
+
+                            showLineChart(countryName);
+
+                            previousCountry = countryName;
+                            previousCountryNode = country;
+
+                            // Trade link stuff
+                            removeTradeLinks();
+
+                            d3.selectAll(".trade-link").each(function(d, i) {
+                                const pathLength = this.getTotalLength();
+
+                                console.log(d3.select(this).attr("from"), lowerCaseName)
+                                if (d3.select(this).attr("from") === lowerCaseName) {
+                                    console.log("success")
+                                    d3.select(this)
+                                        .transition()
+                                        // d3.ease documentation:
+                                        // https://d3js.org/d3-ease
+                                        .ease(d3.easePoly.exponent(4))
+                                        .attr("stroke-dashoffset", 0)
+                                        .style("stroke", "black")
+                                        .style("opacity", 1)
+                                        .duration(linkDuration);
+                                    d3.select(`circle#start${i}`)
+                                        .transition()
+                                        .style("opacity", 1)
+                                        .style("fill", "black");
+                                } else {
+                                }
+                            })
+                        } else {
+                            // if it's selected already
+                        }
+                    }
+                });         
+            
             // 
             // CREATE THE VISUALIZATIONS
             // 
@@ -153,6 +373,9 @@
             countrySurfaceAreaData.forEach(d => {
                 countrySurfaceArea[d["Country Name"]] = d["2022"];
             });
+
+            const electricityData = await d3.json("data/country-energy-cleaned.json");
+            console.log(electricityData)
 
             // Draw everything first, but set their visibility to hidden to hide them and show as needed l8r
             // Setting their visibility to hidden doesn't necessarily mean "display: none"
@@ -230,8 +453,8 @@
 
                                             return `M ${coords1[0]} ${coords1[1]} Q ${curvePoint[0]} ${curvePoint[1]} ${coords2[0]} ${coords2[1]}`
                                       })
-                                      .attr("from", d => d.partner)
-                                      .attr("to", d => d.geo)
+                                      .attr("from", d => removeWhiteSpace(d.partner.toLowerCase()))
+                                      .attr("to", d => removeWhiteSpace(d.geo.toLowerCase()))
                                       .style("fill", "none")
                                       .style("stroke", "black")
                                       .style("stroke-width", "1px")
@@ -260,25 +483,35 @@
                     svg.append("circle")
                        .attr("class", "trade-link-circle start")
                        .attr("id", "start" + i)
+                       .attr("from", d3.select(this).attr("from"))
                        .attr("cx", c => Math.round(startCircleCoords.x))
                        .attr("cy", c => Math.round(startCircleCoords.y))
                        .attr("r", 2)
                        .style("opacity", 0)
-                    svg.append("circle")
-                       .attr("class", "trade-link-circle end")
-                       .attr("id", "end" + i)
-                       .attr("cx", c => Math.round(endCircleCoords.x))
-                       .attr("cy", c => Math.round(endCircleCoords.y))
-                       .attr("r", 2)
-                       .style("opacity", 0);
                 });
 
                 // Store every reversed DOM list we have
                 reversedCircles = {};
-                async function drawLineChart(svgSelector, csvPath, name) {
-                    const tooltip = d3.select("#tooltip");
 
-                    const selectedSVG = d3.select(svgSelector)
+                async function drawLineChart(svgSelector=null, name, separate=false) {
+                    let lowerCaseName = removeWhiteSpace(name.toLowerCase());
+                    if (separate) {
+                        lowerCaseName = lowerCaseName + "-separated";
+                    }
+
+                    const tooltip = d3.select("#tooltip");
+                    let selectedSVG;
+                    if (svgSelector === null) {
+                        selectedSVG = d3.select("#mass-line-chart-container")
+                            .append("svg")
+                            .attr("id", `${lowerCaseName}-line-chart`)
+                            .attr("width", 600)
+                            .attr("height", 500);
+                    } else {
+                        selectedSVG = d3.select(svgSelector);
+                    }
+
+                    const legendSVGs = d3.selectAll(".legend-div");
                     const width = selectedSVG.attr("width");
                     const height = selectedSVG.attr("height");
                     const margin = {top: 10, right: 10, bottom: 50, left: 50};
@@ -291,18 +524,19 @@
                         .attr("transform","translate("+margin.left+","+margin.top+")");
 
                     // Reformat data 
-                    let dataset = await d3.csv(csvPath, d3.autoType);
+                    let dataset = electricityData[name];
+
                     const longData = [];
-                    dataset.forEach(row => {
-                        const type = row.Type;
+                    Object.keys(dataset).forEach(rowKey => {
+                        row = dataset[rowKey];
+                        const type = rowKey;
                         if (type === "Consumption" || type === "Exports" || type === "Imports") return;
                         Object.keys(row).forEach(key => {
-                            if (key !== "Type") {
-                                const year = +key;
-                                const value = +row[key];
-                                if (!isNaN(year) && !isNaN(value)) {
-                                    longData.push({ type, year, value });
-                                }
+                            const year = +key;
+                            const value = +row[key];
+                            if (!isNaN(year) && !isNaN(value)) {
+                                longData.push({ type, year, value });
+                                
                             }
                         });
                     });
@@ -351,30 +585,36 @@
                     // Append axes
                     annotations.append("g")
                         .attr("class", "y axis")
+                        .attr("id", `${lowerCaseName}-yaxis`)
                         .attr("transform", `translate(${margin.left - 10},${margin.top})`)
                         .call(leftAxis)
                         .style("opacity", 0);
 
                     annotations.append("text")
                         .attr("text-anchor", "end")
+                        .attr("id", `${lowerCaseName}-ylabel`)
                         .attr("transform", "rotate(-90)")
                         .attr("y", -margin.left + 60)
                         .attr("x", -margin.top - 180)
                         .style("text-anchor", "middle")
                         .style("font-size", "14px")
+                        .style("opacity", 0)
                         .text("Quantity (MWh)");
 
                     annotations.append("g")
                         .attr("class", "x axis")
+                        .attr("id", `${lowerCaseName}-xaxis`)
                         .attr("transform", `translate(${margin.left},${chartHeight + margin.top + 10})`)
                         .call(bottomAxis)
                         .style("opacity", 0);
 
                     annotations.append("text")
+                        .attr("id", `${lowerCaseName}-xlabel`)
                         .attr("x", margin.left + chartWidth / 2)
                         .attr("y", height - 5)
                         .style("text-anchor", "middle")
                         .style("font-size", "15px")
+                        .style("opacity", 0)
                         .text("Year");
 
                     const line = d3.line()
@@ -386,12 +626,13 @@
                     const dataByType = d3.group(longData, d => d.type);
 
                     // Plot lines
-                    energyLines = chartArea.selectAll(`path.${name}-line`)
+                    energyLines = chartArea.selectAll(`path.${lowerCaseName}-line`)
                         .data(dataByType)
                         .join("path")
-                        .attr("class", `${name}-line`)
+                        .attr("class", ([type]) => `${lowerCaseName}-line ${removeWhiteSpace(type)} energy-line`)
                         .attr("d", ([type, values]) => line(values))
                         .attr("fill", "none")
+                        .style("opacity", 1)
                         .attr("stroke", ([type]) => colorScale(type))
                         .attr("stroke-width", 2)
                         .on("mouseover", function(event, d) {
@@ -414,11 +655,11 @@
                             let prevY;
                             let sum = 0;
 
-                            d3.select(svgSelector).append("g")
-                                .selectAll(`circle.${name}-circle`)
+                            selectedSVG.append("g")
+                                .selectAll(`circle.${lowerCaseName}-circle`)
                                 .data(values)
                                 .join("circle")
-                                .attr("class", `${name}-circle`)
+                                .attr("class", `${lowerCaseName}-circle ${removeWhiteSpace(type)} energy-circle`)
                                 .attr("cx", d => yearScale(d.year) + margin.left)
                                 .attr("cy", d => valueScale(d.value) + margin.top)
                                 .attr("sum", function(d) {
@@ -443,7 +684,7 @@
                                 .style("opacity", 1)
                                 .on("mouseover", function(event, d) {
                                     // Highlight the corresponding line by increasing stroke-width
-                                    d3.selectAll(`.${name}-line`)
+                                    d3.selectAll(`.${lowerCaseName}-line`)
                                         .filter(([lineType]) => lineType === d.type)
                                         .transition()
                                         .duration(200)
@@ -459,7 +700,7 @@
                                     .style("top", (event.pageY - 20) + "px");
                                 })
                                 .on("mouseout", function(event, d) {
-                                    d3.selectAll(`.${name}-line`)
+                                    d3.selectAll(`.${lowerCaseName}-line`)
                                         .transition()
                                         .duration(200)
                                         .attr("stroke-width", 2);
@@ -470,30 +711,101 @@
                             }
                         }
 
-                    const legendGroup = selectedSVG.append("g")
-                        .attr("class", "legend-group")
-                        .attr("transform", `translate(${0}, ${0})`)
-                        .style("z-index", 2)
-                        .style("opacity", 0);
+                    if (d3.selectAll(".legend-group")._groups[0][0] == null) {
+                        legendSVGs.each(function(legendSVGContainer) {
+                            const legendSVG = d3.select(this).append("svg")
+                                .attr("width", 160)
+                                .attr("height", 210)
+                                .attr("class", "legend-svg");
 
-                    const legend = legendGroup.selectAll(".legend")
-                        .data(dataByType.keys())
-                        .join("g")
-                        .attr("class", "legend")
-                        .attr("transform", (d, i) => `translate(0,${i * 20})`);
+                            const legendGroup = legendSVG.append("g")
+                                .attr("class", "legend-group")
+                                .attr("transform", `translate(${0}, ${0})`)
+                                .style("z-index", 2)
+                                .style("opacity", 0);
 
-                    legend.append("rect")
-                        .attr("x", 0)
-                        .attr("width", 10)
-                        .attr("height", 10)
-                        .attr("fill", d => colorScale(d));
+                            const legend = legendGroup.selectAll(".legend")
+                                .data(dataByType.keys())
+                                .join("g")
+                                .attr("class", d => `legend ${removeWhiteSpace(d)}`)
+                                .attr("transform", function(d, i) {
+                                    // Return the right translation depending on whether this is a subset
+                                    groups = ["Nuclear", "Fossil fuels", "Renewables"];
+                                    xTranslation = 20;
+                                    if (groups.includes(d)) {
+                                        xTranslation = 0;
+                                    }
+                                    return `translate(${xTranslation},${i * 20 + 10})`})
+                                .on("mouseover", function() {
+                                    type = d3.select(this).attr("class").replace("legend ", "");
+                                    
+                                    d3.selectAll("path.energy-line.current-svg")
+                                        .transition()
+                                        .duration(200)
+                                        .style("opacity", function(d) {
+                                            let line = d3.select(this);
+                                            let correctClass = removeWhiteSpace(type);
 
-                    legend.append("text")
-                        .attr("x", 15)
-                        .attr("y", 9)
-                        .text(d => d);
+                                            if (line.classed(type)) {
+                                                return 1;
+                                            } else {
+                                                return 0.2;
+                                            }
+                                        });
+
+                                    d3.select(this).classed("hovered-legend", true);
+
+                                    d3.selectAll("circle.energy-circle.current-svg")
+                                        .transition()
+                                        .duration(200)
+                                        .style("opacity", function(d) {
+                                            let circle = d3.select(this);
+                                            let correctClass = removeWhiteSpace(type);
+
+                                            if (circle.classed(type)) {
+                                                return 1;
+                                            } else {
+                                                return 0.2;
+                                            }
+                                        });
+                                        
+                                    d3.select(this).classed("hovered-legend", true);
+                                })
+                                .on("mouseout", function() {
+                                    d3.selectAll("path.energy-line")
+                                        .transition()
+                                        .duration(200)
+                                        .style("opacity", 1);
+
+                                    d3.selectAll("circle.energy-circle")
+                                        .transition()
+                                        .duration(200)
+                                        .style("opacity", 1);
+
+                                    d3.select(this).classed("hovered-legend", false);
+                                })
+
+                            legend.append("rect")
+                                .attr("x", 0)
+                                .attr("width", 10)
+                                .attr("height", 10)
+                                .attr("fill", d => colorScale(d));
+
+                            legend.append("text")
+                                .attr("x", 15)
+                                .attr("y", 9)
+                                .text(d => d);
+                            
+                            legendGroup.raise();  
+                        })
+                    }
                     
-                    legendGroup.raise();    
+                    let lineClass = "notanimated-line";
+                    let opacity = 1;
+                    if (separate) {
+                        lineClass ="animated-line";
+                        opacity = 0;
+                    }
 
                     // Draw vertical line at year 2016
                     const breakYear = 2016;
@@ -503,6 +815,8 @@
                         .attr("x2", breakX)
                         .attr("y1", 0)
                         .attr("y2", chartHeight)
+                        .attr("class", lineClass)
+                        .style("opacity", opacity)
                         .attr("stroke", "red")
                         .attr("stroke-width", 2)
                         .attr("stroke-dasharray", "4 4"); 
@@ -516,13 +830,27 @@
                     })
 
                 const newCircles = d3.selectAll(
-                    d3.selectAll(`circle.${name}-circle`).nodes().reverse()
+                    d3.selectAll(`circle.${lowerCaseName}-circle`).nodes().reverse()
                 );
-                reversedCircles[name] = newCircles;
+                reversedCircles[lowerCaseName] = newCircles;
             }
                 
-            drawLineChart("#svg-line", "data/germany_energy.csv", "germany")
-            drawLineChart("#svg-line-2", "data/russian_energy.csv", "russia")
+            drawLineChart("#svg-line", "Germany", separated=true);
+            drawLineChart("#svg-line-2", "Russia", separated=true);
+
+            const mappedCountryNames = [];
+            console.log(Object.keys(electricityData))
+            Object.keys(electricityData).forEach((d) => {
+                if (tempMappedCountryNames.includes(d)) {
+                    mappedCountryNames.push(d);
+                }
+            });
+
+            mappedCountryNames.forEach((d) => {
+                drawLineChart(svgSelector=null, name=d);
+            });
+            console.log(mappedCountryNames  )
+
             // Draw a line representing the start of Russo Ukranian
 
                 // Russian and Ukranian energy production
@@ -531,31 +859,8 @@
             }
             pageLoad();
 
-            // resets zoom form to zoomIdentity original zoom
-            function zoomOutToWorld(duration) {
-                svg.transition()
-                   .duration(duration)
-                   .call(
-                    zoom.transform,
-                    d3.zoomIdentity 
-                );
-            }
-
             // The following functions are called whenever we need to make something visible
-            // They shouldn't 'add' anything to the svg - only edit visibility via opacity, radius, etc.
-
-            // SOME TIMING VARIABLES:
-
-            const disappearDuration = 500;
-            const appearDuration = disappearDuration;
-            const linkDuration = 800;
-            const delayMultiplier = 12;
-
-            const germanLineDuration = 4000;
-            const circleDuration = 500;           
-
-            const zoomInDuration = 3000;
-            const zoomOutDuration = zoomInDuration;
+            // They shouldn't 'add' anything to the svg - only edit visibility via opacity, radius, etc.     
 
             // By draw, we mean make visible - they should already be created on the svg
             // Draw the map
@@ -610,12 +915,13 @@
                             .transition()
                             .duration(disappearDuration)
                             .style("opacity", 0);
-                        d3.select(`circle#end${i}`)
-                            .transition()
-                            .duration(0)
-                            .style("opacity", 0);
 
                         // Now, make them visible
+                        d3.select(`circle#start${i}`)
+                            .transition()
+                            .delay(delay)
+                            .duration(linkDuration)
+                            .style("opacity", 1);
                         d3.select(d3Object)
                             .transition()
                             .delay(delay)
@@ -624,15 +930,7 @@
                             .ease(d3.easePoly.exponent(4))
                             .attr("stroke-dashoffset", 0)
                             .style("opacity", 1)
-                            .duration(linkDuration);
-                        d3.select(`circle#start${i}`)
-                            .transition()
-                            .delay(delay)
-                            .style("opacity", 1);
-                        d3.select(`circle#end${i}`)
-                            .transition()
-                            .delay(delay + linkDuration)
-                            .style("opacity", 1)
+                            .duration(linkDuration)
                             .on("end", () => {
                                 // When we end our animation, queue up another one by repeating the whole thing
                                 // Add the timeout to our dict to keep track of it
@@ -644,55 +942,30 @@
                     })
                 }
 
-            // German energy production
-            function draw2() {
-                clean("germanEnergy");
-                // keep opcaity of map
-                svg.selectAll("path.country")
-                        .transition()
-                        .duration(500)
-                        .style("opacity", 1)
-                // zoom into map
-                const [gx, gy] = projection(germanyCoords);
-                const zoomScale = 4;
-                const tx = width / 2 - gx * zoomScale;
-                const ty = height / 2 - gy * zoomScale;
-                
-                // Animate zoom to Germany
-                svg.transition().duration(1000).call(
-                    zoom.transform,
-                    d3.zoomIdentity
-                        .translate(tx, ty)
-                        .scale(zoomScale)
-                );
-                
-                // Outline Germany
-                svg.selectAll("path.country")
-                        .transition()
-                        .duration(500)
-                        .style("opacity", d => d.properties.name === "Germany" ? 1 : 0.4)
-                        // .style("stroke", d => d.properties.name === "Germany" ? "black" : "white")
-                        // .style("stroke-width", d => d.properties.name === "Germany" ? 2 : 1);
+            // Helper function for line chart drawing
+            // @param {string} the country name used for the line chart
+            function showLineChart(country, separated=false) {
+                let lowerCaseName = removeWhiteSpace(country.toLowerCase());
 
-                // show the line graph
+                if (separated) {
+                    lowerCaseName = lowerCaseName + "-separated";
+                }
 
-                d3.select("#svg-line").transition().duration(appearDuration).style("opacity", 1);
-
-                d3.selectAll("path.germany-line").each(function(d, i) {
+                d3.selectAll(`path.${lowerCaseName}-line`).each(function(d, i) {
                     const pathLength = this.getTotalLength();
 
                     d3.select(this)
-                        .transition()
+                        .classed("current-svg", true)
+                        .transition("energyLineTransition")
                         // d3.ease documentation:
                         // https://d3js.org/d3-ease
                         .ease(d3.easeLinear)
                         .attr("stroke-dashoffset", 0)
-                        .style("opacity", 1)
                         .duration(germanLineDuration);
                 });
 
-                maxSum = 0;
-                reversedCircles["germany"].each(function(d) {
+                maxSum = 0;                
+                reversedCircles[lowerCaseName].each(function(d) {
                     let d3Object = d3.select(this);
                     let circleSum = parseInt(d3Object.attr("sum"));
 
@@ -702,7 +975,9 @@
 
                     let circleDelay = Math.round(circleSum / maxSum * germanLineDuration);
 
-                    d3Object.transition()
+                    d3Object
+                            .classed("current-svg", true)
+                            .transition("energyCircleTransition")
                             .delay(circleDelay)
                             .ease(d3.easeBackOut)
                             .attr("r", 4)
@@ -713,9 +988,43 @@
                     }
                 });
 
-                d3.select('.legend-group').transition().duration(500).style("opacity", 1);
-                d3.selectAll(".x.axis").transition().duration(500).style("opacity", 1);
-                d3.selectAll(".y.axis").transition().duration(500).style("opacity", 1);
+                if (separated) {
+                    d3.selectAll("line.animated-line")
+                    .transition()
+                    .delay(germanLineDuration * 1.3)
+                    .duration(appearDuration)
+                    .style("opacity", 1);
+                }
+
+                d3.selectAll('.legend-group').transition().duration(500).style("opacity", 1);
+                d3.select(`#${lowerCaseName}-xaxis`).transition().duration(500).style("opacity", 1);
+                d3.select(`#${lowerCaseName}-yaxis`).transition().duration(500).style("opacity", 1);
+                d3.select(`#${lowerCaseName}-xlabel`).transition().duration(500).style("opacity", 1);
+                d3.select(`#${lowerCaseName}-ylabel`).transition().duration(500).style("opacity", 1);
+            }
+
+            // German energy production
+            function draw2() {
+                clean("germanEnergy");
+                // keep opcaity of map
+                svg.selectAll("path.country")
+                        .transition()
+                        .duration(500)
+                        .style("opacity", 1)
+
+                // Outline Germany
+                svg.selectAll("path.country")
+                        .transition()
+                        .duration(500)
+                        .style("opacity", d => d.properties.name === "Germany" ? 1 : 0.4)
+
+                // show the line graph
+                showLineChart("Germany", separated=true);
+                d3.select("#svg-line")
+                    .transition()
+                    .duration(appearDuration)
+                    .style("opacity", 1);
+
             }
 
             // Draw a line representing the start of Russo Ukranian
@@ -725,67 +1034,65 @@
                 svg.selectAll("path.country")
                         .transition()
                         .duration(500)
-                        .style("opacity", d => d.properties.name === "Germany" || d.properties.name === "Russia" ? 1 : 0.4)
-                        // .style("stroke", d => d.properties.name === "Germany" ? "black" : "white")
-                        // .style("stroke-width", d => d.properties.name === "Germany" ? 2 : 1);
-                // zoom rest identity
+                        .style("opacity", d => d.properties.name === "Ukraine" || d.properties.name === "Russia" ? 1 : 0.4)
 
-                zoomOutToWorld(zoomOutDuration)
                 // show the line graph
-                d3.select("#svg-line-2").transition().duration(appearDuration).style("opacity", 1);
+                showLineChart("Russia", separated=true);
+                d3.select("#svg-line-2")
+                    .transition()
+                    .duration(appearDuration)
+                    .style("opacity", 1);
+            }
 
-                d3.selectAll("path.russia-line").each(function(d, i) {
+            // Everyone's circulation
+            function draw4() {
+                clean("CountryLineCharts");
+                d3.select("#mass-line-chart-container")
+                        .transition()
+                        .duration(appearDuration)
+                        .style("opacity", 1);
+
+                lineChartMousing = true;
+
+                lowerCasePrevious = removeWhiteSpace(previousCountry.toLowerCase());
+
+                svg.selectAll("path.country")
+                        .classed("selected-country", d => d.properties.name === previousCountry ? true : false)
+                        .transition()
+                        .duration(appearDuration)
+                        .style("opacity", d => d.properties.name === previousCountry ? 1 : 0.4);
+
+                d3.select(`#${lowerCasePrevious}-line-chart`)
+                        .transition()
+                        .duration(appearDuration)
+                        .style("opacity", 1);
+                    
+                d3.select(`#${lowerCasePrevious}-line-chart`).raise();
+
+                showLineChart(previousCountry);
+
+                // Trade links
+                d3.selectAll(".trade-link").each(function(d, i) {
                     const pathLength = this.getTotalLength();
 
-                    d3.select(this)
-                        .transition()
-                        // d3.ease documentation:
-                        // https://d3js.org/d3-ease
-                        .ease(d3.easeLinear)
-                        .attr("stroke-dashoffset", 0)
-                        .style("opacity", 1)
-                        .duration(germanLineDuration);
-                });
-
-                maxSum = 0;
-                reversedCircles["russia"].each(function(d) {
-                    let d3Object = d3.select(this);
-                    let circleSum = parseInt(d3Object.attr("sum"));
-
-                    if (maxSum < 1) {
-                        maxSum = circleSum;
+                    if (d3.select(this).attr("from") === lowerCasePrevious) {
+                        console.log("success")
+                        d3.select(this)
+                            .transition()
+                            // d3.ease documentation:
+                            // https://d3js.org/d3-ease
+                            .ease(d3.easePoly.exponent(4))
+                            .attr("stroke-dashoffset", 0)
+                            .style("opacity", 1)
+                            .duration(linkDuration);
+                        d3.select(`circle#start${i}`)
+                            .transition()
+                            .style("opacity", 1);
+                    } else {
                     }
 
-                    let circleDelay = Math.round(circleSum / maxSum * germanLineDuration);
-
-                    d3Object.transition()
-                            .delay(circleDelay)
-                            .ease(d3.easeBackOut)
-                            .attr("r", 4)
-                            .duration(circleDuration);
-
-                    if (circleSum < 1) {
-                        maxSum = circleSum;
-                    }
-                });
-
-                d3.select('.legend-group').transition().duration(500).style("opacity", 1);
-                d3.selectAll("#svg-line-2 .x.axis").transition().duration(500).style("opacity", 1);
-                d3.selectAll("#svg-line-2 .y.axis").transition().duration(500).style("opacity", 1);
+                })
             }
-
-            // Russian and Ukranian energy production
-            function draw4() {
-                clean("someOtherChart");
-
-            }
-
-            // Play with yourself (What?)
-            function draw5() {
-                clean("someOtherChart");
-
-            }
-
             // Stores all of the drawing functions so we can easily refer to them
             activationFunctions = [
                 draw0,
@@ -793,36 +1100,71 @@
                 draw2,
                 draw3,
                 draw4,
-                draw5
+                draw1
             ]
 
+            // Helper Function for clean()
+            // @param {string} country - the lowercase name of a country that was used to make a line chart
+            function removeLineChart(country, separated=false) {
+                let lowerCaseName = removeWhiteSpace(country.toLowerCase());
+                if (separated) {
+                    lowerCaseName = lowerCaseName + "-separated"
+                }
+
+                d3.selectAll(`path.${lowerCaseName}-line`).each(function(d) {
+                        const pathLength = this.getTotalLength();
+                        d3.select(this)
+                            .classed("current-svg", false)
+                            .interrupt("energyLineTransition")
+                            .transition()
+                            .duration(disappearDuration / 2)
+                            .attr("stroke-dashoffset", pathLength);
+                });
+
+                maxSum = 0;
+                reversedCircles[lowerCaseName].each(function(d) {
+                    let d3Object = d3.select(this);
+                    let circleSum = parseInt(d3Object.attr("sum"));
+
+                    if (maxSum < 1) {
+                        maxSum = circleSum;
+                    }
+
+                    let circleDelay = Math.round(( 1 - circleSum / maxSum) * disappearDuration / 2);
+
+                    d3Object.classed("current-svg", false)
+                            .interrupt("energyCircleTransition")
+                            .transition("removeEnergyCircles")
+                            .delay(circleDelay)
+                            .ease(d3.easeBackOut)
+                            .attr("r", 0)
+                            .duration(circleDuration);
+
+                    if (circleSum < 1) {
+                        maxSum = circleSum;
+                    }
+                });
+
+                if (separated) {
+                    d3.selectAll("line.animated-line")
+                    .transition()
+                    .duration(0)
+                    .style("opacity", 0)
+                }
+
+                d3.selectAll('.legend-group').transition().duration(500).style("opacity", 0);
+                d3.select(`#${lowerCaseName}-xaxis`).transition().duration(500).style("opacity", 0);
+                d3.select(`#${lowerCaseName}-yaxis`).transition().duration(500).style("opacity", 0);
+                d3.select(`#${lowerCaseName}-xlabel`).transition().duration(500).style("opacity", 0);
+                d3.select(`#${lowerCaseName}-ylabel`).transition().duration(500).style("opacity", 0);
+            }
+            
             // Removes visibility from every other chart than the one specified
             // @param {string} chartType - a str of the chart to clean for (the only one we're making visible)
             function clean(chartType) {
                 // If we're NOT looking at the tradelinks viz
                 if (chartType !== "tradeLinks") {
-                    tradeLinkActive = false;
-
-                    svg.selectAll("circle.start")
-                        .transition()
-                        .duration(disappearDuration)
-                        .style("opacity", 0);
-
-                    svg.selectAll("circle.end")
-                        .transition()
-                        .duration(disappearDuration / 3)
-                        .style("opacity", 0);
-
-                    // Then, interrupt every current transition and set visibility to 0
-                    svg.selectAll("path.trade-link").each(function(d) {
-                        const pathLength = this.getTotalLength();
-                        d3.select(this)
-                            .interrupt()
-                            .transition()
-                            .duration(disappearDuration)
-                            .style("opacity", 0)
-                            .attr("stroke-dashoffset", pathLength);
-                    })
+                    removeTradeLinks();
                     
                     // Interrupt every timeout in the dict
                     for (const key in tradeLinkTimeouts) {
@@ -833,59 +1175,8 @@
                 if (chartType !== "germanEnergy" ) {
                     // d3.select("#svg-line").style("opacity", 0);
                     d3.select("#svg-line").transition().duration(disappearDuration).style("opacity", 0);
-                    d3.selectAll("path.germany-line").each(function(d) {
-                        const pathLength = this.getTotalLength();
-                        d3.select(this)
-                        .interrupt()
-                        .transition()
-                        .duration(disappearDuration / 2)
-                        .style("opacity", 0)
-                        .attr("stroke-dashoffset", pathLength);
-                    })}
-                    
-                if (chartType !== "RussiaInvades") {
-                    // d3.select("#svg-line").style("opacity", 0);
-                    d3.select("#svg-line-2").transition().duration(disappearDuration).style("opacity", 0);
-                    d3.selectAll("path.russia-line").each(function(d) {
-                        const pathLength = this.getTotalLength();
-                        d3.select(this)
-                            .interrupt()
-                            .transition()
-                            .duration(disappearDuration / 2)
-                            .style("opacity", 0)
-                            .attr("stroke-dashoffset", pathLength);
+                    removeLineChart("Germany", separated=true);
 
-                    d3.selectAll("#svg-line-2 .x.axis").transition().duration(500).style("opacity", 1);
-                    d3.selectAll("#svg-line-2 .y.axis").transition().duration(500).style("opacity", 1);
-                })}
-                
-
-                    maxSum = 0;
-                    reversedCircles["germany"].each(function(d) {
-                        let d3Object = d3.select(this);
-                        let circleSum = parseInt(d3Object.attr("sum"));
-
-                        if (maxSum < 1) {
-                            maxSum = circleSum;
-                        }
-
-                        let circleDelay = Math.round(( 1 - circleSum / maxSum) * disappearDuration / 2);
-
-                        d3Object.transition()
-                                .delay(circleDelay)
-                                .ease(d3.easeBackOut)
-                                .attr("r", 0)
-                                .duration(circleDuration);
-
-                        if (circleSum < 1) {
-                            maxSum = circleSum;
-                        }
-                    });
-                    // d3.select('.legend-group').transition().duration(disappearDuration).style("opacity", 0);
-                    d3.selectAll(".x.axis-2").transition().duration(disappearDuration).style("opacity", 0);
-                    d3.selectAll(".y.axis-2").transition().duration(500).style("opacity", 0);
-
-                zoomOutToWorld(0)
                 // ALLEGEDLY reset outline of Germnay 
                 svg.selectAll("path.country")
                     .transition()
@@ -893,6 +1184,7 @@
                     .style("opacity", 0.4)
                     .style("stroke", "white")
                     .style("stroke-width", 1)
+                }
 
                 // If we're NOT looking at the tradelinks viz OR the initial map
                 if (!["tradeLinks", "plainMap"].includes(chartType)) {
@@ -905,6 +1197,20 @@
                 // TODO
                 // Add more cleaning for the specific visualizations
                 // For example, add a if(chartType !== "germanEnergy")
+                if (chartType !== "RussiaInvades") {
+                    d3.select("#svg-line-2").transition().duration(disappearDuration).style("opacity", 0);
+                    removeLineChart("Russia", separated=true);
+                }
+
+                if (!["RussiaInvades", "germanEnergy", "CountryLineCharts"].includes(chartType)) {
+                    d3.selectAll('.legend-group').transition().duration(disappearDuration).style("opacity", 0);
+                }
+
+                if (chartType !== "CountryLineCharts") {
+                    d3.select("#mass-line-chart-container").transition().duration(disappearDuration).style("opacity", 0);
+                    removeLineChart(previousCountry);
+                    lineChartMousing = false;
+                }
             }
 
             // Credit for the scroller code:
@@ -927,6 +1233,11 @@
                 })
                 lastIndex = activeIndex;
             })
+
+            d3.select("#warning-text")
+                .transition()
+                .duration(500)
+                .style("opacity", 0.1)
         };
         requestData();
     </script>
