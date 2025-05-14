@@ -64,6 +64,9 @@
         <div id="GermanEnergy">
             <svg id="svg-line" width="600" height="500" opacity="0"></svg>
         </div>
+        <div id="RussianEnergy">
+            <svg id="svg-line-2" width="600" height="500" opacity="0"></svg>
+        </div>
     </div>
 
     <script>
@@ -425,6 +428,7 @@
             }
                 
             drawLineChart("#svg-line", "data/germany_energy.csv", "germany")
+            drawLineChart("#svg-line-2", "data/russian_energy.csv", "russia")
             
             // Draw a line representing the start of Russo Ukranian
 
