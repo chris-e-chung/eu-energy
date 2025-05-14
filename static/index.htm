@@ -458,9 +458,12 @@
 
             // Create a dict to keep track of all of the timeouts that we currently have running
             const tradeLinkTimeouts = {};
+            let tradeLinkActive = true;
+
             // Draw the trade links
             function draw1() {
                 clean("tradeLinks");
+                tradeLinkActive = true;
 
                 svg.selectAll("path.country")
                     .transition()
@@ -483,24 +486,26 @@
                     // Make it into a function so that we can call it repeatedly
                     // @param d3Object - a tradeLine
                     function repeat(d3Object) {
+                        if (!tradeLinkActive) return;
+
                         // Set the visibility to 0 if it isn't already
                         d3.select(d3Object)
-                            .transition("trade-link")
+                            .transition()
                             .duration(disappearDuration)
                             .attr("stroke-dashoffset", pathLength)
                             .style("opacity", 0)
                         d3.select(`circle#start${i}`)
-                            .transition("trade-link")
+                            .transition()
                             .duration(disappearDuration)
                             .style("opacity", 0);
                         d3.select(`circle#end${i}`)
-                            .transition("trade-link")
+                            .transition()
                             .duration(0)
                             .style("opacity", 0);
 
                         // Now, make them visible
                         d3.select(d3Object)
-                            .transition("trade-link")
+                            .transition()
                             .delay(delay)
                             // d3.ease documentation:
                             // https://d3js.org/d3-ease
@@ -509,11 +514,11 @@
                             .style("opacity", 1)
                             .duration(linkDuration);
                         d3.select(`circle#start${i}`)
-                            .transition("trade-link")
+                            .transition()
                             .delay(delay)
                             .style("opacity", 1);
                         d3.select(`circle#end${i}`)
-                            .transition("trade-link")
+                            .transition()
                             .delay(delay + linkDuration)
                             .style("opacity", 1)
                             .on("end", () => {
@@ -654,8 +659,10 @@
 
                 // If we're NOT looking at the tradelinks viz
                 if (chartType !== "tradeLinks") {
+                    tradeLinkActive = false;
+
                     svg.selectAll("circle.trade-link-circle")
-                        .transition("trade-link")
+                        .transition()
                         .duration(0)
                         .style("opacity", 0);
 
@@ -664,7 +671,7 @@
                         const pathLength = this.getTotalLength();
                         d3.select(this)
                             .interrupt()
-                            .transition("trade-link")
+                            .transition()
                             .duration(disappearDuration)
                             .style("opacity", 0)
                             .attr("stroke-dashoffset", pathLength);
