@@ -68,6 +68,8 @@
             <svg id="svg-line-2" width="600" height="500" opacity="0"></svg>
         </div>
     </div>
+    <div id="tooltip" class="tooltip"></div>
+
 
     <script>
         async function requestData() {
@@ -274,6 +276,8 @@
                 // Store every reversed DOM list we have
                 reversedCircles = {};
                 async function drawLineChart(svgSelector, csvPath, name) {
+                    const tooltip = d3.select("#tooltip");
+
                     const selectedSVG = d3.select(svgSelector)
                     const width = selectedSVG.attr("width");
                     const height = selectedSVG.attr("height");
@@ -351,11 +355,27 @@
                         .call(leftAxis)
                         .style("opacity", 0);
 
+                    annotations.append("text")
+                        .attr("text-anchor", "end")
+                        .attr("transform", "rotate(-90)")
+                        .attr("y", -margin.left + 60)
+                        .attr("x", -margin.top - 180)
+                        .style("text-anchor", "middle")
+                        .style("font-size", "14px")
+                        .text("Quantity (MWh)");
+
                     annotations.append("g")
                         .attr("class", "x axis")
                         .attr("transform", `translate(${margin.left},${chartHeight + margin.top + 10})`)
                         .call(bottomAxis)
                         .style("opacity", 0);
+
+                    annotations.append("text")
+                        .attr("x", margin.left + chartWidth / 2)
+                        .attr("y", height - 5)
+                        .style("text-anchor", "middle")
+                        .style("font-size", "15px")
+                        .text("Year");
 
                     const line = d3.line()
                         .defined(d => !isNaN(d.value) && !isNaN(d.year))
@@ -373,7 +393,19 @@
                         .attr("d", ([type, values]) => line(values))
                         .attr("fill", "none")
                         .attr("stroke", ([type]) => colorScale(type))
-                        .attr("stroke-width", 2);
+                        .attr("stroke-width", 2)
+                        .on("mouseover", function(event, d) {
+                            // Highlight current line
+                            d3.select(this)
+                                .attr("stroke-width", 4)
+                                // .raise(); // bring to front
+                        })
+                        .on("mouseout", function() {
+                            d3.select(this)
+                                .attr("stroke-width", 2)
+
+                        });
+
 
                     for (let [type, values] of dataByType) {
                         if (type !== "Exports" && type !== "Imports" && type !== "Consumption") {
@@ -408,7 +440,33 @@
                                 })
                                 .attr("r", 0)
                                 .attr("fill", colorScale(type))
-                                .style("opacity", 1);
+                                .style("opacity", 1)
+                                .on("mouseover", function(event, d) {
+                                    // Highlight the corresponding line by increasing stroke-width
+                                    d3.selectAll(`.${name}-line`)
+                                        .filter(([lineType]) => lineType === d.type)
+                                        .transition()
+                                        .duration(200)
+                                        .attr("stroke-width", 4);
+
+                                    tooltip
+                                        .style("opacity", 1)
+                                        .html(d.value + " MWh");
+                                })
+                                .on("mousemove", function(event) {
+                                    tooltip
+                                    .style("left", (event.pageX + 10) + "px")
+                                    .style("top", (event.pageY - 20) + "px");
+                                })
+                                .on("mouseout", function(event, d) {
+                                    d3.selectAll(`.${name}-line`)
+                                        .transition()
+                                        .duration(200)
+                                        .attr("stroke-width", 2);
+                                    tooltip
+                                        .style("opacity", 0)
+
+                                });
                             }
                         }
 
@@ -436,6 +494,18 @@
                         .text(d => d);
                     
                     legendGroup.raise();    
+
+                    // Draw vertical line at year 2016
+                    const breakYear = 2016;
+                    const breakX = yearScale(breakYear);
+                    chartArea.append("line")
+                        .attr("x1", breakX)
+                        .attr("x2", breakX)
+                        .attr("y1", 0)
+                        .attr("y2", chartHeight)
+                        .attr("stroke", "red")
+                        .attr("stroke-width", 2)
+                        .attr("stroke-dasharray", "4 4"); 
                     
                     energyLines.each(function(d, i) {
                         const pathLength = this.getTotalLength();
@@ -811,9 +881,9 @@
                             maxSum = circleSum;
                         }
                     });
-                    d3.select('.legend-group').transition().duration(disappearDuration).style("opacity", 0);
-                    d3.selectAll(".x.axis").transition().duration(disappearDuration).style("opacity", 0);
-                    d3.selectAll(".y.axis").transition().duration(500).style("opacity", 0);
+                    // d3.select('.legend-group').transition().duration(disappearDuration).style("opacity", 0);
+                    d3.selectAll(".x.axis-2").transition().duration(disappearDuration).style("opacity", 0);
+                    d3.selectAll(".y.axis-2").transition().duration(500).style("opacity", 0);
 
                 zoomOutToWorld(0)
                 // ALLEGEDLY reset outline of Germnay 
