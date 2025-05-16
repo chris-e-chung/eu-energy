@@ -185,3 +185,8 @@ a {
     text-decoration: none;
     color: #599cb2;
 }
+
+a:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
