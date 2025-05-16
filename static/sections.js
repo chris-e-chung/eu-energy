@@ -5,7 +5,10 @@ const appearDuration = disappearDuration;
 const linkDuration = 800;
 const delayMultiplier = 12;
 
-const germanLineDuration = 4000;
+// After we scroll to the fourth viz, we speed up the line animations from then on
+var lineAnimationDuration = 4000;
+var lineAnimationSpedUp = false;
+
 const circleDuration = 500;      
 
 // Just a convenient function to get rid of whitespace
@@ -781,7 +784,7 @@ function draw0() {
 
     svg.selectAll("path.country")
         .transition()
-        .duration(500)
+        .duration(appearDuration)
         .style("opacity", 0.8);
 }
 
@@ -873,7 +876,7 @@ function showLineChart(country, separated=false) {
             // https://d3js.org/d3-ease
             .ease(d3.easeLinear)
             .attr("stroke-dashoffset", 0)
-            .duration(germanLineDuration);
+            .duration(lineAnimationDuration);
     });
 
     maxSum = 0;                
@@ -885,7 +888,7 @@ function showLineChart(country, separated=false) {
             maxSum = circleSum;
         }
 
-        let circleDelay = Math.round(circleSum / maxSum * germanLineDuration);
+        let circleDelay = Math.round(circleSum / maxSum * lineAnimationDuration);
 
         d3Object
                 .classed("current-svg", true)
@@ -903,16 +906,16 @@ function showLineChart(country, separated=false) {
     if (separated) {
         d3.selectAll("line.animated-line")
         .transition()
-        .delay(germanLineDuration * 1.3)
+        .delay(lineAnimationDuration * 1.3)
         .duration(appearDuration)
         .style("opacity", 1);
     }
 
-    d3.selectAll('.legend-group').transition().duration(500).style("opacity", 1);
-    d3.select(`#${lowerCaseName}-xaxis`).transition().duration(500).style("opacity", 1);
-    d3.select(`#${lowerCaseName}-yaxis`).transition().duration(500).style("opacity", 1);
-    d3.select(`#${lowerCaseName}-xlabel`).transition().duration(500).style("opacity", 1);
-    d3.select(`#${lowerCaseName}-ylabel`).transition().duration(500).style("opacity", 1);
+    d3.selectAll('.legend-group').transition().duration(appearDuration).style("opacity", 1);
+    d3.select(`#${lowerCaseName}-xaxis`).transition().duration(appearDuration).style("opacity", 1);
+    d3.select(`#${lowerCaseName}-yaxis`).transition().duration(appearDuration).style("opacity", 1);
+    d3.select(`#${lowerCaseName}-xlabel`).transition().duration(appearDuration).style("opacity", 1);
+    d3.select(`#${lowerCaseName}-ylabel`).transition().duration(appearDuration).style("opacity", 1);
 }
 
 // German energy production
@@ -927,7 +930,7 @@ function draw2() {
     // Outline Germany
     svg.selectAll("path.country")
             .transition()
-            .duration(500)
+            .duration(appearDuration)
             .style("opacity", d => d.properties.name === "Germany" ? 1 : 0.4)
 
     // show the line graph
@@ -945,7 +948,7 @@ function draw3() {
     // keep opcaity of map
     svg.selectAll("path.country")
             .transition()
-            .duration(500)
+            .duration(appearDuration)
             .style("opacity", d => d.properties.name === "Ukraine" || d.properties.name === "Russia" ? 1 : 0.4)
 
     // show the line graph
@@ -958,6 +961,12 @@ function draw3() {
 
 // Everyone's circulation
 function draw4() {
+    // Make the lines animate faster from now on
+    if (!lineAnimationSpedUp) {
+        lineAnimationDuration = lineAnimationDuration / 1.5;
+        lineAnimationSpedUp = true;
+    }
+
     clean("CountryLineCharts");
     d3.select("#mass-line-chart-container")
             .transition()
@@ -1052,18 +1061,11 @@ function removeLineChart(country, separated=false) {
         }
     });
 
-    if (separated) {
-        d3.selectAll("line.animated-line")
-        .transition()
-        .duration(0)
-        .style("opacity", 0)
-    }
-
-    d3.selectAll('.legend-group').transition().duration(500).style("opacity", 0);
-    d3.select(`#${lowerCaseName}-xaxis`).transition().duration(500).style("opacity", 0);
-    d3.select(`#${lowerCaseName}-yaxis`).transition().duration(500).style("opacity", 0);
-    d3.select(`#${lowerCaseName}-xlabel`).transition().duration(500).style("opacity", 0);
-    d3.select(`#${lowerCaseName}-ylabel`).transition().duration(500).style("opacity", 0);
+    d3.selectAll('.legend-group').transition().duration(disappearDuration).style("opacity", 0);
+    d3.select(`#${lowerCaseName}-xaxis`).transition().duration(disappearDuration).style("opacity", 0);
+    d3.select(`#${lowerCaseName}-yaxis`).transition().duration(disappearDuration).style("opacity", 0);
+    d3.select(`#${lowerCaseName}-xlabel`).transition().duration(disappearDuration).style("opacity", 0);
+    d3.select(`#${lowerCaseName}-ylabel`).transition().duration(disappearDuration).style("opacity", 0);
 }
 
 // Removes visibility from every other chart than the one specified
@@ -1083,14 +1085,6 @@ function clean(chartType) {
         // d3.select("#svg-line").style("opacity", 0);
         d3.select("#svg-line").transition().duration(disappearDuration).style("opacity", 0);
         removeLineChart("Germany", separated=true);
-
-    // ALLEGEDLY reset outline of Germnay 
-    svg.selectAll("path.country")
-        .transition()
-        .duration(500)
-        .style("opacity", 0.4)
-        .style("stroke", "white")
-        .style("stroke-width", 1)
     }
 
     // If we're NOT looking at the tradelinks viz OR the initial map
@@ -1135,7 +1129,7 @@ let lastIndex, activeIndex = 0;
 
 scroll.on('active', function(index) {
     d3.selectAll('.step')
-        .transition().duration(500)
+        .transition().duration(disappearDuration)
         .style('opacity', function (d, i) {return i === index ? 1 : 0.1;});
     
     activeIndex = index
@@ -1149,7 +1143,7 @@ scroll.on('active', function(index) {
 
 d3.select("#warning-text")
     .transition()
-    .duration(500)
+    .duration(disappearDuration * 2)
     .style("opacity", 0.1)
 };
 requestData();

@@ -176,3 +176,8 @@ div#energy-header * {
     opacity: 0;
     transition: 0.5s;
 }
+
+a {
+    text-decoration: none;
+    color: #599cb2;
+}
