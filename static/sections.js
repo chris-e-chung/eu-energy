@@ -1072,9 +1072,15 @@ function clean(chartType) {
     }
 
     if (chartType !== "CountryLineCharts") {
-        d3.select("#mass-line-chart-container").transition().duration(disappearDuration).style("opacity", 0);
+        d3.select("#mass-line-chart-container")
+            .transition()
+            .duration(disappearDuration)
+            .style("opacity", 0);
         removeLineChart(previousCountry);
         lineChartMousing = false;
+
+        svg.selectAll("path.country")   
+            .classed("hovered-country", false);
     }
 }
 
