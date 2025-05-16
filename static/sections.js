@@ -12,42 +12,47 @@ const circleDuration = 500;
 // @param {string} str - a string
 // @returns {string} the str with the whitespace removed
 function removeWhiteSpace(str) {
-return str.replace(/\s/g,'');
+    return str.replace(/\s/g,'');
 }
 
 //
-function removeTradeLinks(keepSelectedCountry = false) {
-svg.selectAll("circle.start")
-    .filter(function() {
-        return keepSelectedCountry
-            ? d3.select(this).attr("from") !== removeWhiteSpace(previousCountry.toLowerCase())
-            : true;
-    })
-    .transition()
-    .duration(disappearDuration)
-    .style("opacity", 0)
-    .on("end", function(d) {
-        d3.select(this).style("fill", "black")
+function removeTradeLinks(keepSelectedCountry = false, noRandomLinks = false) {
+    svg.selectAll("circle.start")
+        .filter(function() {
+            return keepSelectedCountry
+                ? d3.select(this).attr("from") !== removeWhiteSpace(previousCountry.toLowerCase())
+                : true;
+        })
+        .transition()
+        .duration(disappearDuration)
+        .style("opacity", 0)
+        .on("end", function(d) {
+            d3.select(this).style("fill", "black")
     });
 
-// Then, interrupt every current transition and set visibility to 0
-svg.selectAll("path.trade-link")
-    .filter(function() {
-        return keepSelectedCountry
-            ? d3.select(this).attr("from") !== removeWhiteSpace(previousCountry.toLowerCase())
-            : true;
-    }).each(function(d) {
-        const pathLength = this.getTotalLength();
-        d3.select(this)
-            .interrupt()
-            .transition()
-            .duration(disappearDuration)
-            .style("opacity", 0)
-            .attr("stroke-dashoffset", pathLength)
-            .on("end", function(d) {
-                d3.select(this).style("stroke", "black")
-    });
-})
+    // Then, interrupt every current transition and set visibility to 0
+    tradeLinksSelector = "path.trade-link";
+    if (noRandomLinks) {
+        tradeLinksSelector = "path.trade-link.norandom";
+    }
+
+    svg.selectAll(tradeLinksSelector)
+        .filter(function() {
+            return keepSelectedCountry
+                ? d3.select(this).attr("from") !== removeWhiteSpace(previousCountry.toLowerCase())
+                : true;
+        }).each(function(d) {
+            const pathLength = this.getTotalLength();
+            d3.select(this)
+                .interrupt()
+                .transition()
+                .duration(disappearDuration)
+                .style("opacity", 0)
+                .attr("stroke-dashoffset", pathLength)
+                .on("end", function(d) {
+                    d3.select(this).style("stroke", "black")
+        });
+    })
 }
 
 async function requestData() {
@@ -98,13 +103,14 @@ const projection = d3.geoConicConformal()
 const path = d3.geoPath().projection(projection);
 
 let tempMappedCountryNames = [];
+const mappedCountryNames = [];
 // Add the paths to the svg
 // Keep track of whether or not we allow mouseovers
 lineChartMousing = false;
 previousCountry = "France";
 previousCountryNode = null;
 
-map = svg.append("g").selectAll("path.country").data(europeFeatures)
+countryPaths = svg.append("g").selectAll("path.country").data(europeFeatures)
     .join("path")
     .attr("d", path)
     .attr("class", "country")
@@ -123,14 +129,12 @@ map = svg.append("g").selectAll("path.country").data(europeFeatures)
         countryName = d.properties.name;
         lowerCaseName = removeWhiteSpace(countryName.toLowerCase());
 
-        if (lineChartMousing && !country.classed("selected-country")) {
+        if (lineChartMousing && !country.classed("selected-country") && !country.classed("no-data")) {
             country.classed("hovered-country", true);
 
             // Filter all the trade links that aren't currently selected
-            d3.selectAll(".trade-link")
+            d3.selectAll(".trade-link.norandom")
             .each(function(d, i) {
-                const pathLength = this.getTotalLength();
-
                 if (d3.select(this).attr("from") === lowerCaseName && d3.select(this).attr("from") !== removeWhiteSpace(previousCountry.toLowerCase())) {
                     d3.select(this)
                         .style("stroke", "grey")
@@ -141,7 +145,7 @@ map = svg.append("g").selectAll("path.country").data(europeFeatures)
                         .attr("stroke-dashoffset", 0)
                         .style("opacity", 1)
                         .duration(linkDuration);
-                    d3.select(`circle#start${i}`)
+                    d3.select(`circle#start${i}.trade-link-circle-norandom`)
                         .style("fill", "grey")
                         .transition()
                         .style("opacity", 1);
@@ -154,7 +158,7 @@ map = svg.append("g").selectAll("path.country").data(europeFeatures)
         if (lineChartMousing && !country.classed("selected-country")) {
             country.classed("hovered-country", false);
 
-            removeTradeLinks(keepSelectedCountry=true);
+            removeTradeLinks(keepSelectedCountry=true, noRandomLinks = true);
         }
     })
     .on("click", function(event, path) {
@@ -162,14 +166,12 @@ map = svg.append("g").selectAll("path.country").data(europeFeatures)
         countryName = path.properties.name;
         lowerCaseName = removeWhiteSpace(countryName.toLowerCase());
 
-        console.log(countryName)
-
-        if (lineChartMousing) {
+        if (lineChartMousing && mappedCountryNames.includes(countryName)) {
             if (!country.classed("selected-country")) {
                 // if it's not selected already
                 removeLineChart(previousCountry);
 
-                d3.select("h3#energy-header").text(`${countryName}'s Energy Production`);
+                d3.select("h3#energy-header-h3").text(`${countryName}'s Energy Production`);
                 
                 d3.selectAll("path.country")
                     .classed("selected-country", false);
@@ -195,14 +197,13 @@ map = svg.append("g").selectAll("path.country").data(europeFeatures)
                 previousCountryNode = country;
 
                 // Trade link stuff
-                removeTradeLinks();
+                removeTradeLinks(keepSelectedCountry=true, noRandomLinks = true);
 
-                d3.selectAll(".trade-link").each(function(d, i) {
-                    const pathLength = this.getTotalLength();
-
-                    console.log(d3.select(this).attr("from"), lowerCaseName)
+                let anyExports = false;
+                d3.selectAll(".trade-link.norandom").each(function(d, i) {
                     if (d3.select(this).attr("from") === lowerCaseName) {
-                        console.log("success")
+                        anyExports = true;
+
                         d3.select(this)
                             .transition()
                             // d3.ease documentation:
@@ -212,13 +213,21 @@ map = svg.append("g").selectAll("path.country").data(europeFeatures)
                             .style("stroke", "black")
                             .style("opacity", 1)
                             .duration(linkDuration);
-                        d3.select(`circle#start${i}`)
+                        d3.select(`circle#start${i}.trade-link-circle-norandom`)
                             .transition()
                             .style("opacity", 1)
                             .style("fill", "black");
                     } else {
                     }
-                })
+                });
+
+                noExportsMsg = d3.select("p#no-exports");
+                if (!anyExports) {
+                    noExportsMsg.style("opacity", 1);
+                } else {
+                    noExportsMsg.style("opacity", 0);
+                }
+
             } else {
                 // if it's selected already
             }
@@ -240,7 +249,6 @@ countrySurfaceAreaData.forEach(d => {
 });
 
 const electricityData = await d3.json("data/country-energy-cleaned.json");
-console.log(electricityData)
 
 // Draw everything first, but set their visibility to hidden to hide them and show as needed l8r
 // Setting their visibility to hidden doesn't necessarily mean "display: none"
@@ -325,6 +333,24 @@ function pageLoad() {
                             .style("stroke-width", "1px")
                             .style("opacity", 1);
 
+    const tradeLinesNoRandom = svg.append("g").selectAll("path.trade-link.norandom").data(tradeLinks).join("path")
+                            .attr("class", "trade-link norandom")
+                            .attr("d", d => {
+                                // Randomize the points somewhat so they don't all come out of / go to the same place
+                                coords1 = projection(d.source), d.partner;
+                                coords2 = projection(d.target), d.geo;
+                                // Add a curve point to make an arc
+                                curvePoint = bezierCurver(coords1, coords2);
+
+                                return `M ${coords1[0]} ${coords1[1]} Q ${curvePoint[0]} ${curvePoint[1]} ${coords2[0]} ${coords2[1]}`
+                            })
+                            .attr("from", d => removeWhiteSpace(d.partner.toLowerCase()))
+                            .attr("to", d => removeWhiteSpace(d.geo.toLowerCase()))
+                            .style("fill", "none")
+                            .style("stroke", "black")
+                            .style("stroke-width", "1px")
+                            .style("opacity", 1);
+                    
     // Add some important parts
     // First, set the stroke settings. It was hard to do this when first drawing them because
     //      we need to calculate the length of the path
@@ -343,10 +369,25 @@ function pageLoad() {
 
         // Add the circles at the beginning and end of each path
         const startCircleCoords = this.getPointAtLength(0);
-        const endCircleCoords = this.getPointAtLength(pathLength);
         // Set the opacity to 0 so they're not visible
         svg.append("circle")
             .attr("class", "trade-link-circle start")
+            .attr("id", "start" + i)
+            .attr("from", d3.select(this).attr("from"))
+            .attr("cx", c => Math.round(startCircleCoords.x))
+            .attr("cy", c => Math.round(startCircleCoords.y))
+            .attr("r", 2)
+            .style("opacity", 0)
+    });
+    tradeLinesNoRandom.each(function(d, i) {
+        const pathLength = this.getTotalLength();
+        d3.select(this)
+            .attr("stroke-dasharray", pathLength + " " + pathLength)
+            .attr("stroke-dashoffset", pathLength);
+
+        const startCircleCoords = this.getPointAtLength(0);
+        svg.append("circle")
+            .attr("class", "trade-link-circle-norandom start")
             .attr("id", "start" + i)
             .attr("from", d3.select(this).attr("from"))
             .attr("cx", c => Math.round(startCircleCoords.x))
@@ -703,8 +744,6 @@ function pageLoad() {
 drawLineChart("#svg-line", "Germany", separated=true);
 drawLineChart("#svg-line-2", "Russia", separated=true);
 
-const mappedCountryNames = [];
-console.log(Object.keys(electricityData))
 Object.keys(electricityData).forEach((d) => {
     if (tempMappedCountryNames.includes(d)) {
         mappedCountryNames.push(d);
@@ -714,7 +753,15 @@ Object.keys(electricityData).forEach((d) => {
 mappedCountryNames.forEach((d) => {
     drawLineChart(svgSelector=null, name=d);
 });
-console.log(mappedCountryNames  )
+
+d3.selectAll("path.country")
+    .classed("no-data", d => {
+        if (!mappedCountryNames.includes(d.properties.name)) {
+            return true;
+        } else {
+            return false;
+        }
+});
 
 // Draw a line representing the start of Russo Ukranian
 
@@ -937,11 +984,8 @@ function draw4() {
     showLineChart(previousCountry);
 
     // Trade links
-    d3.selectAll(".trade-link").each(function(d, i) {
-        const pathLength = this.getTotalLength();
-
+    d3.selectAll(".trade-link.norandom").each(function(d, i) {
         if (d3.select(this).attr("from") === lowerCasePrevious) {
-            console.log("success")
             d3.select(this)
                 .transition()
                 // d3.ease documentation:
@@ -950,12 +994,10 @@ function draw4() {
                 .attr("stroke-dashoffset", 0)
                 .style("opacity", 1)
                 .duration(linkDuration);
-            d3.select(`circle#start${i}`)
+            d3.select(`circle#start${i}.trade-circle-norandom`)
                 .transition()
                 .style("opacity", 1);
-        } else {
         }
-
     })
 }
 // Stores all of the drawing functions so we can easily refer to them
