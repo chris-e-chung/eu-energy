@@ -814,6 +814,7 @@ function draw1() {
         // We also later add the duration to the delay to determine when the end circle should be shown
         const delay = length * Math.random() * delayMultiplier;
         eachObject = this;
+        d3.select(this).style("stroke", "black");
 
         // Make it into a function so that we can call it repeatedly
         // @param d3Object - a tradeLine
