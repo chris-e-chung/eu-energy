@@ -84,6 +84,10 @@ p {
     object-fit: contain;
 }
 
+.trade-link, .trade-link-circle, .trade-link-circle-norandom {
+    pointer-events: none;
+}
+
 .tick line {
     stroke: 'red'
 }
