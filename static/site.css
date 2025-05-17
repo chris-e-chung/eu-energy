@@ -191,3 +191,11 @@ a:hover {
     cursor: pointer;
     text-decoration: underline;
 }
+
+#githublink-p {
+    margin-bottom: 100px;
+}
+
+#datasources {
+    padding-left: 20px;
+}

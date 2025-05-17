@@ -31,9 +31,7 @@ What I learned from the challenges of this project:
 
 <!-- - Optimizing for mobile-view. -->
 
-[![D3][D3.js]][D3-url]  
-
-[![Render][Render.com]][Render-url]
+[![Render][Render.com]][Render-url] [![D3][D3.js]][D3-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -46,21 +44,19 @@ In no particular order:
 - [ ] Trade Link Numbers
 - [ ] Toggle (Line Chart) Animations
 - [ ] Mobile View
+- [ ] Russia-Ukraine lines
+- [ ] Images for storytelling on the left
 
 <!-- CONTACT -->
 ## Contributors
 
-<a href="https://github.com/chris-e-chung">
-<img src="https://github.com/chris-e-chung.png" alt="drawing" width="75" style="border-radius: 50%;"/>
+<a href="https://github.com/chris-e-chung/eu-energy/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=chris-e-chung/eu-energy" />
 </a>
 
 *Chris Chung* - cc2299@cornell.edu
 
 I'm currently a graduate student at Cornell University. Stay tuned for a portfolio.
-
-<a href="https://github.com/MaxM2559">
-<img src="https://github.com/MaxM2559.png" alt="drawing" width="75" style="border-radius: 50%;"/>
-</a>
 
 *Max Ma* - mm2559@cornell.edu
 
