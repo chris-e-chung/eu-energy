@@ -278,7 +278,7 @@ function pageLoad() {
     // @param {[number, number]} coord1 - an array of [x1, y1] where each value is a pixel coordinate x or y
     // @param {[number, number]} coord2 - an array of [x2, y2] where each value is a pixel coordinate x or y
     // @return {[number, number]} an array of [q1, q2] where each value is the pixel coordinate of the perpendicular point
-    function bezierCurver(coord1, coord2) {
+    function bezierCurver(coord1, coord2, randomness=2) {
         [x1, y1] = coord1;
         [x2, y2] = coord2;
 
@@ -290,7 +290,7 @@ function pageLoad() {
         // Add some randomness
         // Math.random() - 0.5 randomizes the sign of the value, so from -0.5 to 0.5
         // We multiply by two to create an interval [-1, 1)
-        h = (Math.random() - 0.5) * length * 2;
+        h = (Math.random() - 0.5) * length * randomness;
 
         result = [mx + (-dy/length) * h, my + (dx/length) * h];
 
@@ -343,7 +343,7 @@ function pageLoad() {
                                 coords1 = projection(d.source), d.partner;
                                 coords2 = projection(d.target), d.geo;
                                 // Add a curve point to make an arc
-                                curvePoint = bezierCurver(coords1, coords2);
+                                curvePoint = bezierCurver(coords1, coords2, randomness=1.5);
 
                                 return `M ${coords1[0]} ${coords1[1]} Q ${curvePoint[0]} ${curvePoint[1]} ${coords2[0]} ${coords2[1]}`
                             })
