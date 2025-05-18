@@ -1,0 +1,116 @@
+@media (orientation: portrait) {
+    body {
+        padding: 0;
+
+        width: 100%;
+        height: 100%;
+    }
+
+    #vis {
+        height: 50dvh;
+        width: 100vw;
+
+        z-index: 1;
+        top: 50dvh;
+        right: auto;
+
+        background-color: #F1F0E8;
+
+        box-shadow: 0px -20px 1em #F1F0E8;
+    }
+
+    #vis svg {
+        max-height: 50dvh;
+        width: 100vw;
+    }
+
+    #graphic {
+        display: flex;
+        justify-content: center;
+    }
+
+    #sections {
+        z-index: 0;
+        margin: 0;
+
+
+        width: 90%;
+        top: auto;
+    }
+
+    .step {
+        width: 100%;
+        height: 900px;
+    }
+
+    .short-step {
+        height: 500px;
+    }
+
+    h1, h2, h3 {
+        text-align: left;
+    }
+
+    .line-chart {
+        max-width: 65vw;
+        height: auto;
+        margin-right: 20px;
+    }
+
+    #hover-text {
+        display: none;
+    }
+
+    div.chart-svg-container {
+        flex-direction: row-reverse;
+
+        align-items: start;
+        justify-content: start;
+        
+    }
+
+    div.line-header {
+        width: 100%;
+        position: relative;
+        margin-bottom: 25px;
+    }
+
+    div.line-header * {
+        margin: 0;
+    }
+
+    .line-header h3 {
+        font-size: 30px;
+    }
+
+    #last-section {
+        height: 90dvh;
+        margin-bottom: 0;
+    }
+
+    .legend-svg {
+        width: 25vw;
+        height: auto;
+    }
+
+    #githublink-p {
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 450px) {
+    h1, h2, h3 {
+        font-size: 30px;
+    }
+    p {
+        font-size: 15px
+    }
+
+    .step {
+        height: 500px;
+    }
+
+    .russo-ukraine-line {
+        stroke-dasharray: 10;
+    }
+}

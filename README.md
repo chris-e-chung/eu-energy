@@ -43,7 +43,7 @@ In no particular order:
 - [ ] Comparative Bar Charts
 - [ ] Trade Link Numbers
 - [ ] Toggle (Line Chart) Animations
-- [ ] Mobile View
+- [x] ~~Mobile View~~
 - [ ] Russia-Ukraine lines
 - [ ] Images for storytelling on the left
 
@@ -82,7 +82,7 @@ Made...
 [example]: example.gif
 [D3.js]: https://img.shields.io/badge/-D3.js-F9A03C?style=for-the-badge&logo=d3&logoColor=white
 [D3-url]: https://d3js.org/
-[Render.com]: https://img.shields.io/badge/-Render-black?style=for-the-badge&logo=render&logoColor=white
+[Render.com]: https://img.shields.io/badge/-Render-black?style=for-the-badge&logo=render&logoColor=white&labelColor=black
 [Render-url]: https://render.com/
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/chris-chung-849901263/

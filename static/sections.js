@@ -1,3 +1,7 @@
+// SIZE VARIABLES
+
+const lineChartSize = [600, 500]
+
 // SOME TIMING VARIABLES:
 
 const disappearDuration = 500;
@@ -174,7 +178,7 @@ countryPaths = svg.append("g").selectAll("path.country").data(europeFeatures)
                 // if it's not selected already
                 removeLineChart(previousCountry);
 
-                d3.select("h3#energy-header-h3").text(`${countryName}'s Energy Production`);
+                d3.select("h3#line-header-h3").text(`${countryName}'s Energy Production`);
                 
                 d3.selectAll("path.country")
                     .classed("selected-country", false);
@@ -421,9 +425,12 @@ function pageLoad() {
         if (svgSelector === null) {
             selectedSVG = d3.select("#mass-line-chart-container")
                 .append("svg")
+                .attr("class", "line-chart")
                 .attr("id", `${lowerCaseName}-line-chart`)
-                .attr("width", 600)
-                .attr("height", 500);
+                .attr("viewBox", `0 0 ${lineChartSize[0]} ${lineChartSize[1]}`)
+                .attr("width", lineChartSize[0])
+                .attr("height", lineChartSize[1])
+                .attr("preserveAspectRatio", "xMidYMid meet");
         } else {
             selectedSVG = d3.select(svgSelector);
         }
@@ -633,6 +640,8 @@ function pageLoad() {
                 const legendSVG = d3.select(this).append("svg")
                     .attr("width", 160)
                     .attr("height", 210)
+                    .attr("preserveAspectRatio", "xMidYMid meet")
+                    .attr("viewBox", "0 0 160 210")
                     .attr("class", "legend-svg");
 
                 const legendGroup = legendSVG.append("g")
@@ -732,7 +741,7 @@ function pageLoad() {
             .attr("x2", breakX)
             .attr("y1", 0)
             .attr("y2", chartHeight)
-            .attr("class", lineClass)
+            .attr("class", lineClass + " russo-ukraine-line")
             .style("opacity", opacity)
             .attr("stroke", "red")
             .attr("stroke-width", 2)
@@ -752,8 +761,8 @@ function pageLoad() {
     reversedCircles[lowerCaseName] = newCircles;
 }
     
-drawLineChart("#svg-line", "Germany", separated=true);
-drawLineChart("#svg-line-2", "Russia", separated=true);
+drawLineChart("#german-svg", "Germany", separated=true);
+drawLineChart("#russian-svg", "Russia", separated=true);
 
 Object.keys(electricityData).forEach((d) => {
     if (tempMappedCountryNames.includes(d)) {
@@ -944,7 +953,7 @@ function draw2() {
 
     // show the line graph
     showLineChart("Germany", separated=true);
-    d3.select("#svg-line")
+    d3.select("#german-svg")
         .transition()
         .duration(appearDuration)
         .style("opacity", 1);
@@ -962,7 +971,7 @@ function draw3() {
 
     // show the line graph
     showLineChart("Russia", separated=true);
-    d3.select("#svg-line-2")
+    d3.select("#russian-svg")
         .transition()
         .duration(appearDuration)
         .style("opacity", 1);
@@ -1091,8 +1100,7 @@ function clean(chartType) {
     }
     
     if (chartType !== "germanEnergy" ) {
-        // d3.select("#svg-line").style("opacity", 0);
-        d3.select("#svg-line").transition().duration(disappearDuration).style("opacity", 0);
+        d3.select("#german-svg").transition().duration(disappearDuration).style("opacity", 0);
         removeLineChart("Germany", separated=true);
     }
 
@@ -1108,7 +1116,7 @@ function clean(chartType) {
     // Add more cleaning for the specific visualizations
     // For example, add a if(chartType !== "germanEnergy")
     if (chartType !== "RussiaInvades") {
-        d3.select("#svg-line-2").transition().duration(disappearDuration).style("opacity", 0);
+        d3.select("#russian-svg").transition().duration(disappearDuration).style("opacity", 0);
         removeLineChart("Russia", separated=true);
     }
 
@@ -1154,5 +1162,6 @@ d3.select("#warning-text")
     .transition()
     .duration(disappearDuration * 2)
     .style("opacity", 0.1)
+
 };
 requestData();

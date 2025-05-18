@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,700;1,400&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="site.css">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,700;1,400&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="styles/site.css">
+    <link rel="stylesheet" href="styles/mobile.css">
+
     <link rel="icon" href="images/Flag_of_Europe.svg">
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -16,104 +17,124 @@
     <script src="https://d3js.org/topojson.v3.min.js"></script>
 
 
-    <meta property="og:title" content="EU Energy"/>
-    <meta property="og:description" content="This scroll-to-interact visualization shows some of the complicated flows of energy around the world, with a focus on the EU's commitment to carbon neutrality."/>
+    <meta property="og:title" content="EU Energy" />
+    <meta property="og:description"
+        content="This scroll-to-interact visualization shows some of the complicated flows of energy around the world, with a focus on the EU's commitment to carbon neutrality." />
     <title>EU Energy</title>
 </head>
 
 <body>
     <div id="graphic">
         <div id="sections">
-            <section class="step">
+            <section class="step short-step">
                 <h1>Energy Trade and the Russian War</h1>
                 <p>
-                    Energy is one of the commodities we least think about when it comes to trade and production in our everyday lives.
-                    It's not flashy like an imported German car, or as delectable as an imported French cheese, but it still plays an
-                    important role in international markets. This is a little project that seeks to visualize its trade and production
+                    Energy is one of the commodities we least think about when it comes to trade and production in our
+                    everyday lives.
+                    It's not flashy like an imported German car, or as delectable as an imported French cheese, but it
+                    still plays an
+                    important role in international markets. This is a little project that seeks to visualize its trade
+                    and production
                     in Europe and Eurasia over the past few years.
-                </p>    
+                </p>
                 <p id="warning-text">wait to scroll until i'm translucent</p>
             </section>
-            <section class="step">
+            <section class="step short-step">
                 <p>
                     To our right, we're seeing all of the yearly trade from one country to another from 2018 to 2023.
-                    Circles represent start points! I mean, look at all of that trade! 
-                    It's hard to get a grasp on the finer details. 
+                    Circles represent start points! I mean, look at all of that trade!
+                    It's hard to get a grasp on the finer details.
                     Let's focus on a specific place - say, Germany - and its energy production.
                 </p>
             </section>
             <section class="step">
                 <p>
-                    We can see here that Germany's relied heavily on fossil fuels since 2000, with coal as their main source. Nuclear's been 
-                    on the decline, and renewables were greatly exceeded by fossil fuels. But, something happened in 2016.
+                    We can see here that Germany's relied heavily on fossil fuels since 2000, with coal as their main
+                    source. Nuclear's been
+                    on the decline, and renewables were greatly exceeded by fossil fuels. But, something happened in
+                    2016.
                 </p>
-                <p>
+                <p id="hover-text">
                     (You can also hover on the categories to highlight, and the points to see values)
                 </p>
                 <div>
-                    <div class="legend-container">
-                        <div class="legend-div" >
+                    <div class="chart-container">
+                        <div class="line-header">
+                            <h3>
+                                Germany's Energy Production
+                            </h3>
                         </div>
-                        <h3>
-                            Germany's Energy Production
-                        </h3>
-                    </div>
-                    <div id="GermanEnergy">
-                        <svg id="svg-line" width="600" height="500" opacity="0"></svg>
+                        <div class="chart-svg-container">
+                            <div class="legend-div"></div>
+                            <div id="GermanEnergy">
+                                <svg class="line-chart" id="german-svg" viewBox="0 0 600 500" width="600" height="500"
+                                    preserveAspectRatio="xMidYMid meet" opacity="0"></svg>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
             <section class="step">
                 <p>
-                    In 2016, Russia annexed the Crimean region in Ukraine. This caused a lot of European nations to sanction Russia, who
-                    supplies a good amount of the fossil fuels in Europe. But it doesn't seem like it affected domestic production too much.
+                    In 2016, Russia annexed the Crimean region in Ukraine. This caused a lot of European nations to
+                    sanction Russia, who
+                    supplies a good amount of the fossil fuels in Europe. But it doesn't seem like it affected domestic
+                    production too much.
                 </p>
                 <div>
-                    <div class="legend-container">
-                        <div class="legend-div" >
+                    <div class="chart-container">
+                        <div class="line-header">
+                            <h3>
+                                Russia's Energy Production
+                            </h3>
                         </div>
-                        <h3>
-                            Russia's Energy Production
-                        </h3>
-                    </div>
-                    <div id="RussianEnergy">
-                        <svg id="svg-line-2" width="600" height="500" opacity="0"></svg>
+                        <div class="chart-svg-container">
+                            <div class="legend-div"></div>
+
+                            <div id="RussianEnergy">
+                                <svg class="line-chart" id="russian-svg" viewBox="0 0 600 500" width="600" height="500"
+                                    preserveAspectRatio="xMidYMid meet" opacity="0"></svg>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
             <section class="step">
                 <p>
-                    To see how other European countries were affected, click on them on the right. The lines that come out are countries
+                    To see how other European countries were affected, click on them on the right. The lines that come
+                    out are countries
                     that the selected country trades energy to.
                 </p>
-                <div>
-                    <div class="legend-container">
-                        <div class="legend-div" >
-                        </div>
-                        <div id="energy-header">
-                            <h3 id="energy-header-h3">
-                                France's Energy Production
-                            </h3>
-                            <p id="no-exports">
-                                (no exports in data)
-                            </p>
-                        </div>
-                        
+                <div class="chart-container">
+                    <div class="line-header">
+                        <h3 id="line-header-h3">
+                            France's Energy Production
+                        </h3>
+                        <p id="no-exports">
+                            (no exports in data)
+                        </p>
                     </div>
-                    <div id="mass-line-chart-container">
+
+                    <div class="chart-svg-container">
+                        <div class="legend-div"></div>
+                        <div id="mass-line-chart-container"></div>
                     </div>
                 </div>
             </section>
-            <section class="step">
+            <section class="step" id="last-section">
                 <p>
                     Built by Chris Chung and Max Ma.
                 </p>
-                <p id="githublink-p">Code can be found at <a href="https://github.com/chris-e-chung/eu-energy">the GitHub Repo</a>.</p>
+                <p id="githublink-p">Code can be found at <a href="https://github.com/chris-e-chung/eu-energy">the
+                        GitHub Repo</a>.</p>
                 <p>
-                    Credit <a href="https://vallandingham.me/scroller.html">Jim Vallandingham</a> for writing a guide on Scrollers.
+                    Credit <a href="https://vallandingham.me/scroller.html">Jim Vallandingham</a> for writing a guide on
+                    Scrollers.
                 </p>
                 <p>
-                    Stylistic inspiration from <a href="https://medium.com/data-science/how-i-created-an-interactive-scrolling-visualisation-with-d3-js-and-how-you-can-too-e116372e2c73">Cuthbert Chow</a>.
+                    Stylistic inspiration from <a
+                        href="https://medium.com/data-science/how-i-created-an-interactive-scrolling-visualisation-with-d3-js-and-how-you-can-too-e116372e2c73">Cuthbert
+                        Chow</a>.
                 </p>
                 <p>
                     Data sources:
@@ -126,16 +147,15 @@
                         <a href="https://www.eia.gov/">Production data the U.S. Energy Information Administration</a>
                     </p>
                 </div>
-
             </section>
         </div>
         <div id="vis">
-            <svg id="svg" width="1000" height="1000"></svg>
+            <svg id="svg" viewBox="0 0 1000 1000" width="1000" height="1000" preserveAspectRatio="xMidYMid meet"></svg>
         </div>
     </div>
     <div id="tooltip" class="tooltip"></div>
-
 </body>
 <script src="scroller.js"></script>
 <script src="sections.js"></script>
+
 </html>
