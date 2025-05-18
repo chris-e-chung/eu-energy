@@ -84,8 +84,8 @@
     }
 
     #last-section {
-        height: 90dvh;
-        margin-bottom: 0;
+        height: fit-content;
+        margin-bottom: 55dvh;
     }
 
     .legend-svg {
@@ -96,12 +96,29 @@
     #githublink-p {
         margin-bottom: 20px;
     }
+
+    .portrait {
+        display: unset;
+    }
+
+    .landscape {
+        display: none;
+    }
 }
 
 @media (max-width: 450px) {
-    h1, h2, h3 {
-        font-size: 30px;
+    h1, h2 {
+        font-size: 25px;
     }
+
+    .line-header h3 {
+        font-size: 20px;
+    }
+
+    .line-header {
+        flex-direction: column-reverse !important;
+    }
+
     p {
         font-size: 15px
     }

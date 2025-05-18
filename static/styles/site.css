@@ -215,3 +215,11 @@ a:hover {
 #last-section {
     height: 700px;
 }
+
+.portrait {
+    display: none;
+}
+
+.landscape {
+    display: unset;
+}
