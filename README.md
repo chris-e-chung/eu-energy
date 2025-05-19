@@ -79,7 +79,7 @@ Made...
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[example]: example.gif
+[example]: images/example.gif
 [D3.js]: https://img.shields.io/badge/-D3.js-F9A03C?style=for-the-badge&logo=d3&logoColor=white
 [D3-url]: https://d3js.org/
 [Render.com]: https://img.shields.io/badge/-Render-black?style=for-the-badge&logo=render&logoColor=white&labelColor=black
