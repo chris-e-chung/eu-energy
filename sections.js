@@ -114,6 +114,7 @@ const mappedCountryNames = [];
 // Add the paths to the svg
 // Keep track of whether or not we allow mouseovers
 lineChartMousing = false;
+// Avez-vous gouter le strudel ici?
 previousCountry = "France";
 previousCountryNode = null;
 
@@ -121,6 +122,7 @@ countryPaths = svg.append("g").selectAll("path.country").data(europeFeatures)
     .join("path")
     .attr("d", path)
     .attr("class", "country")
+    .attr("id", d => d.properties.name + "-path")
     .attr("country", d => d.properties.name)
     // I chose these colors from here:
     // https://colorhunt.co/palette/89a8b2b3c8cfe5e1daf1f0e8
@@ -240,6 +242,56 @@ countryPaths = svg.append("g").selectAll("path.country").data(europeFeatures)
             }
         }
     });         
+
+// Crimea
+// defs is where we keep all of the patterns and paths that we'll be using
+const defs= svg.append("defs");
+
+// First, append a path that isn't the exact shape of Crimea, but roughly contains it
+defs.append("clipPath").attr("id", "crimeaPath").append("path")
+                    .attr("d", d => {
+                        let coords1 = (projection([33.62109, 46.22909]));
+                        let coords2 = (projection([35.02934755047164, 45.75655860231394]));
+                        let coords3 = (projection([37.26019417528333, 46.21289074522977]));
+                        let coords4 = (projection([34.315858631346075, 42.39382786149982]));
+                        let coords5 = (projection([31.459413769724833, 45.51287122537125]));
+                        let coords6 = (projection([33.54681579230979, 45.94234492487497]));
+
+                        return `M ${coords1[0]} ${coords1[1]} 
+                                L ${coords2[0]} ${coords2[1]}
+                                L ${coords3[0]} ${coords3[1]}
+                                L ${coords4[0]} ${coords4[1]}
+                                L ${coords5[0]} ${coords5[1]}
+                                L ${coords6[0]} ${coords6[1]}
+                                Z`
+                    });
+
+// Append a `<pattern>` element that we'll use to fill in Crimea
+const pattern = defs.append("pattern").attr("id", "stripes")
+                                    .attr("patternUnits", "userSpaceOnUse")
+                                    // How often it's repeated is the width
+                                    .attr("width", 8)
+                                    .attr("height", 20)
+                                    .attr("patternTransform", "rotate(135)")
+pattern.append("rect").attr("x", 0)
+                      .attr("y", 0)
+                      // Should be half the overall pattern's width
+                      .attr("width", '4')
+                      .attr("height", "20")
+                      .attr("fill", "red")
+pattern.append("rect").attr("x", 5)
+                      .attr("y", 0)
+                      // Should be half the overall pattern's width
+                      .attr("width", '4')
+                      .attr("height", "20")
+                      .attr("fill", "none")
+
+// Finally, append the clip path and fill it with the pattern
+const crimeaIntersection = svg.append("path")
+                              .attr("d", d3.select("#Ukraine-path").attr("d"))
+                              .attr("clip-path", "url(#crimeaPath)")
+                              .attr("id", "crimea-area")
+                              .attr("fill", "url(#stripes")
 
 // 
 // CREATE THE VISUALIZATIONS
@@ -480,9 +532,8 @@ function pageLoad() {
             "Renewables",
             "Hydroelectricity",
             "Geothermal",
-            "Solar, tide, wave, fuel cell",
-            "Wind",
-            "Solar, tide, wave, fuel cell",
+            "Solar",
+            "Wind"
         ];
         // These were ChatGPT'd
         const energyColors = [
@@ -495,8 +546,7 @@ function pageLoad() {
             "#4682B4", // Hydroelectricity (steel blue, water theme)
             "#BA55D3", // Geothermal (purple, earth/heat theme)
             "#FFD700", // Solar, tide, wave, fuel cell (gold/yellow for sun)
-            "#1E90FF", // Wind (sky blue, air/wind)
-            "#FFA500"  // Solar, tide, wave, fuel cell (orange, alternate sun/wave color)
+            "#1E90FF"  // Wind (sky blue, air/wind)
         ];
         const colorScale = d3.scaleOrdinal(energyTypes, energyColors);
 
@@ -975,6 +1025,11 @@ function draw3() {
         .transition()
         .duration(appearDuration)
         .style("opacity", 1);
+
+    d3.select("#crimea-area")
+      .classed("crimea-animation", true)
+      .transition()
+      .duration(appearDuration);
 }
 
 // Everyone's circulation
@@ -1118,6 +1173,11 @@ function clean(chartType) {
     if (chartType !== "RussiaInvades") {
         d3.select("#russian-svg").transition().duration(disappearDuration).style("opacity", 0);
         removeLineChart("Russia", separated=true);
+
+        d3.select("#crimea-area")
+            .classed("crimea-animation", false)
+            .transition()
+            .duration(disappearDuration);
     }
 
     if (!["RussiaInvades", "germanEnergy", "CountryLineCharts"].includes(chartType)) {

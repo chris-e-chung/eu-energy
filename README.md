@@ -9,13 +9,13 @@ Link: https://github.com/othneildrew/Best-README-Template/tree/main
 <p align="center">
   A short project showing the production of energy in Europe and some exports.
   <br />
-  <a href="https://four310-final-ssdw.onrender.com"><strong>View the Website! »</strong></a>
+  <a href="https://chrischung.dev/eu-energy/"><strong>View the Website! »</strong></a>
 </p>
 
 <!-- ABOUT THE PROJECT -->
 ## About This Project
 
-[![EU Energy example][example]](https://four310-final-ssdw.onrender.com)
+[![EU Energy example][example]](https://chrischung.dev/eu-energy/)
 
 EU Energy is an scroll-to-interact visualization that shows the user energy trade and production in Europe, built using D3.js.
 
@@ -44,7 +44,7 @@ In no particular order:
 - [ ] Trade Link Numbers
 - [ ] Toggle (Line Chart) Animations
 - [x] ~~Mobile View~~
-- [ ] Russia-Ukraine lines
+- [ ] Split up the Russia-Ukraine section into two parts, one that storytells Crimea and another that shows the chart
 - [ ] Images for storytelling on the left
 
 <!-- CONTACT -->
@@ -84,5 +84,4 @@ Made...
 [D3-url]: https://d3js.org/
 [Render.com]: https://img.shields.io/badge/-Render-black?style=for-the-badge&logo=render&logoColor=white&labelColor=black
 [Render-url]: https://render.com/
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://www.linkedin.com/in/chris-chung-849901263/
+
